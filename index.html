@@ -437,9 +437,11 @@
       cadence: "Only when a retrieved story is new inside the window",
       end: "When you say you are home",
       endDate: "",
-      consent: "",
+      consent: null,
+      pendingConfirmationId: null,
       log: []
     };
+    let confirmationSequence = 0;
     let busy = false;
     let windowDays = 14;
     let latest = null;
@@ -618,10 +620,22 @@
       if (service.state !== "awaiting") return;
       const channel = channelConfig();
       if (fromButton) thread.push({ type: "reader", text: `${channel.start} until I am home.` });
+      const confirmation = thread.find(message => message.type === "confirm" && message.id === service.pendingConfirmationId);
+      const consent = {
+        at: new Date().toISOString(),
+        channel: service.channel,
+        scope: service.scope,
+        cadence: service.cadence,
+        end: service.end,
+        endDate: service.endDate,
+        windowDays
+      };
+      if (confirmation) confirmation.snapshot = consent;
       service.state = "active";
-      service.consent = new Date().toISOString();
+      service.consent = consent;
+      service.pendingConfirmationId = null;
       const end = service.endDate ? `, or on ${formatDate(service.endDate + "T00:00:00Z")}, whichever comes first` : "";
-      thread.push({ type: "times", text: `Started via ${channel.label}. I will send only about this Paris trip, only when a retrieved Times story is new within ${windowDays} days, and I will stop when you say you are home${end}. Say less often, pause, or stop. This is not a safety monitor.` });
+      thread.push({ type: "times", text: `Started via ${channel.label}. I will send only about ${service.scope.toLowerCase()}, only when a retrieved Times story is new within ${windowDays} days, and I will stop when you say you are home${end}. Say less often, pause, or stop. This is not a safety monitor.` });
       addLog("No send", "Consent recorded. No story qualified at activation.");
       render();
     }
@@ -629,6 +643,7 @@
     function decline(alreadySpoken) {
       if (service.state !== "awaiting") return;
       service.state = "none";
+      service.pendingConfirmationId = null;
       if (!alreadySpoken) thread.push({ type: "reader", text: "Just this answer." });
       thread.push({ type: "times", text: `Understood. I will not send ${channelConfig().plural} about this. The answer above stands on its own.` });
       addLog("No send", "Reader declined follow-up.");
@@ -739,14 +754,18 @@
       return card;
     }
 
-    function renderConfirm() {
-      const pending = service.state === "awaiting";
-      const channel = channelConfig();
+    function renderConfirm(message) {
+      const pending = service.state === "awaiting" && service.pendingConfirmationId === message.id;
+      const snapshot = message.snapshot;
+      const selectedChannel = pending ? service.channel : snapshot?.channel || service.channel;
+      const channel = CHANNELS[selectedChannel];
+      const scope = snapshot?.scope || service.scope;
+      const cadence = snapshot?.cadence || service.cadence;
       const card = el("div", { class: "card" }, [
         el("div", { class: "meta" }, "Confirm before any recurring update"),
-        el("h2", {}, pending ? "I heard a request for follow-up. I have not started it." : "Follow-up stayed off until this confirmation."),
-        el("p", {}, `Scope: ${service.scope}`),
-        el("p", {}, `Channel: ${service.channel}. Cadence: ${service.cadence.toLowerCase()}.`),
+        el("h2", {}, pending ? "I heard a request for follow-up. I have not started it." : snapshot ? "This is what you approved." : "Follow-up stayed off."),
+        el("p", {}, `Scope: ${scope}`),
+        el("p", {}, `Channel: ${selectedChannel}. Cadence: ${cadence.toLowerCase()}.`),
         el("p", {}, "Ends when you say you are home. You can say less often, pause, or stop. One-time questions do not enroll you.")
       ]);
       if (!pending) return card;
@@ -791,7 +810,7 @@
         if (message.type === "times") threadEl.append(el("div", { class: "bubble times" }, message.text));
         if (message.type === "pending") threadEl.append(el("div", { class: "bubble times typing", "aria-label": "The Times is typing" }, [el("span"), el("span"), el("span")]));
         if (message.type === "brief") threadEl.append(renderBrief(message));
-        if (message.type === "confirm") threadEl.append(renderConfirm());
+        if (message.type === "confirm") threadEl.append(renderConfirm(message));
         if (message.type === "update") threadEl.append(renderUpdate(message));
       });
       threadEl.scrollTop = threadEl.scrollHeight;
@@ -828,7 +847,7 @@
         el("dt", {}, "Channel"), el("dd", {}, service.channel),
         el("dt", {}, "Cadence"), el("dd", {}, service.cadence),
         el("dt", {}, "End"), el("dd", {}, service.endDate ? `${service.end} or ${formatDate(service.endDate + "T00:00:00Z")}` : service.end),
-        el("dt", {}, "Consent"), el("dd", {}, service.consent ? formatDate(service.consent) : "Not recorded")
+        el("dt", {}, "Consent"), el("dd", {}, service.consent ? `${formatDate(service.consent.at)} · ${service.consent.channel} · ${service.consent.windowDays}-day window` : "Not recorded")
       ]);
       const rule = el("p", { class: "note" }, latest ? latest.data.rule.text : "Latest News fires when there is at least 1 HIGH-relevance chunk, or at least 3 HIGH/MEDIUM-relevance chunks, published or updated within 14 days.");
       const classifier = el("p", { class: "note" }, latest ? latest.data.rule.classifier : "Ask a question to retrieve from the NAPP test.");
@@ -889,7 +908,8 @@
         if (wantsFollowUp(text) && service.state !== "active" && service.state !== "paused") {
           service.state = "awaiting";
           service.scope = text.toLowerCase().includes("paris") ? "Paris trip — must-sees, local recommendations, and disruptions that could affect plans" : "The subject of this question";
-          thread.push({ type: "confirm" });
+          service.pendingConfirmationId = ++confirmationSequence;
+          thread.push({ type: "confirm", id: service.pendingConfirmationId, snapshot: null });
         } else if (service.state === "none" || service.state === "cancelled") {
           thread.push({ type: "times", text: "This stays a one-time answer. I have not enrolled you in texts." });
         }

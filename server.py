@@ -10,6 +10,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 from html import unescape
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.parse import parse_qs, urlencode, urlparse
 from urllib.request import Request, urlopen
@@ -23,6 +24,7 @@ USER_AGENT = (
 )
 CACHE_TTL_SECONDS = 120
 CACHE = {}
+BASE_DIR = Path(__file__).resolve().parent
 
 
 def junescape(value):
@@ -156,11 +158,15 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         parsed = urlparse(self.path)
-        if parsed.path == "/":
-            with open("index.html", "rb") as handle:
-                body = handle.read()
+        static_files = {
+            "/": ("index.html", "text/html; charset=utf-8"),
+            "/catalog.json": ("catalog.json", "application/json; charset=utf-8"),
+        }
+        if parsed.path in static_files:
+            filename, content_type = static_files[parsed.path]
+            body = (BASE_DIR / filename).read_bytes()
             self.send_response(200)
-            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Type", content_type)
             self.send_header("Content-Length", str(len(body)))
             self.send_header("Cache-Control", "no-store")
             self.end_headers()
