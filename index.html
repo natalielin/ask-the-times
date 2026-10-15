@@ -114,39 +114,44 @@
     .status { font-size: 11px; color: var(--muted); }
     .status[data-state="active"] { color: var(--good); }
     .status[data-state="awaiting"], .status[data-state="paused"] { color: var(--warn); }
-    .channel-bar {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 3px;
-      padding: 6px 10px;
-      background: #f2f2f7;
-      border-bottom: 0.5px solid var(--line);
-      flex: 0 0 auto;
+    .launcher, #inbox, #conversation { flex: 1; min-height: 0; }
+    .launcher[hidden], #inbox[hidden], #conversation[hidden] { display: none !important; }
+    #conversation { display: flex; flex-direction: column; }
+    .launcher {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 28px 22px 18px;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(255, 255, 255, .75), transparent 28%),
+        linear-gradient(180deg, #d7e7f4 0%, #edf3ea 48%, #d5e2cf 100%);
     }
-    .channel-bar button, .channel-choice button {
+    .lock-clock { font-size: 78px; font-weight: 600; letter-spacing: -2px; line-height: .9; }
+    .lock-date { margin-top: 6px; color: #3a3a3c; font-size: 18px; font-weight: 550; }
+    .app-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px 8px; }
+    .app-launch {
       border: 0;
-      border-radius: 8px;
-      padding: 6px 4px;
       background: transparent;
-      color: #636366;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
       font-size: 12px;
-      font-weight: 650;
-    }
-    .channel-bar button[aria-pressed="true"], .channel-choice button[aria-pressed="true"] {
-      background: #fff;
+      font-weight: 600;
       color: #111;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, .12);
+      text-shadow: 0 1px 0 rgba(255, 255, 255, .4);
     }
-    .channel-bar button:disabled { cursor: default; opacity: .55; }
-    .channel-choice {
+    .app-glyph {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 3px;
-      margin: 8px 0;
-      padding: 3px;
-      border-radius: 11px;
-      background: #e5e5ea;
+      place-items: center;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, .16);
     }
+    .app-glyph.sms { background: linear-gradient(180deg, #5fe07a, #2fbf4d); }
+    .app-glyph.whatsapp { background: #25d366; border-radius: 50%; }
+    .app-glyph.gmail { background: #fff; }
     .thread {
       flex: 1;
       overflow: auto;
@@ -290,46 +295,95 @@
     .channel-note { padding: 9px 10px; border-radius: 10px; background: #fff; color: #636366; font-size: 12px; }
     label.inline { display: flex; align-items: center; gap: 8px; margin: 8px 0; font-size: 14px; }
     input[type="number"], input[type="date"] { border: 0; border-radius: 8px; padding: 6px 8px; background: #fff; }
-    .screen[data-channel="whatsapp"] .nav { background: #075e54; border-color: #075e54; color: #fff; }
-    .screen[data-channel="whatsapp"] .nav .icon-btn,
-    .screen[data-channel="whatsapp"] .status { color: rgba(255, 255, 255, .8); }
-    .screen[data-channel="whatsapp"] .thread { background: #efeae2; }
-    .screen[data-channel="whatsapp"] .bubble.reader { background: #d9fdd3; color: #111; }
-    .screen[data-channel="whatsapp"] .bubble.times { background: #fff; }
-    .screen[data-channel="whatsapp"] .composer { background: #efeae2; }
-    .screen[data-channel="whatsapp"] .send { background: #00a884; }
-    .screen[data-channel="whatsapp"] .chips button { color: #008069; }
-    .screen[data-channel="email"] .nav { grid-template-columns: 44px 1fr 44px; padding-bottom: 8px; }
-    .screen[data-channel="email"] .avatar { border-radius: 8px; }
-    .screen[data-channel="email"] .thread { background: #f6f8fc; gap: 12px; }
-    .screen[data-channel="email"] .bubble,
-    .screen[data-channel="email"] .card {
-      align-self: stretch;
-      max-width: none;
+    #inbox { overflow: auto; background: #fff; }
+    .list-top, .wa-top, .gmail-top { display: flex; align-items: center; gap: 8px; }
+    .list-top { padding: 8px 16px 0; }
+    .list-top h1 { flex: 1; margin: 0; font-size: 34px; letter-spacing: -0.6px; }
+    .search-pill, .gmail-search {
+      margin: 10px 16px;
       border-radius: 12px;
-      background: #fff;
-      color: #111;
-      box-shadow: 0 1px 3px rgba(60, 64, 67, .16);
+      background: #f2f2f7;
+      color: #8e8e93;
+      padding: 9px 12px;
+      font-size: 16px;
     }
-    .screen[data-channel="email"] .bubble.reader::before {
-      content: "To: The Times";
-      display: block;
-      margin-bottom: 5px;
-      color: #5f6368;
-      font-size: 11px;
-      font-weight: 650;
+    .thread-row, .wa-row, .gmail-row {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      display: grid;
+      grid-template-columns: 52px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      text-align: left;
+      padding: 12px 16px;
+      border-top: 0.5px solid #ececec;
     }
-    .screen[data-channel="email"] .bubble.times::before {
-      content: "From: The New York Times";
-      display: block;
-      margin-bottom: 5px;
-      color: #5f6368;
-      font-size: 11px;
-      font-weight: 650;
+    .thread-row strong, .wa-row strong, .gmail-row strong { display: block; font-size: 16px; }
+    .thread-row p, .wa-row p, .gmail-row p { margin: 2px 0 0; color: #8e8e93; font-size: 14px; }
+    .thread-row time, .wa-row time, .gmail-row time { color: #8e8e93; font-size: 12px; }
+    .row-avatar {
+      width: 46px; height: 46px; border-radius: 50%; background: #121212; color: #fff;
+      display: grid; place-items: center; font-family: "Source Serif 4", Georgia, serif; font-size: 22px;
     }
-    .screen[data-channel="email"] .composer { background: #fff; }
-    .screen[data-channel="email"] .send { border-radius: 8px; background: #1a73e8; }
-    .screen[data-channel="email"] .chips button { color: #1a73e8; }
+    .wa-top { height: 58px; padding: 0 16px; background: #008069; color: #fff; font-size: 22px; font-weight: 650; }
+    .wa-top button, .gmail-top button, .list-top button { border: 0; background: transparent; color: inherit; font-weight: 650; }
+    .wa-filters { display: flex; gap: 8px; padding: 10px 16px; background: #fff; }
+    .wa-filters span { border-radius: 16px; padding: 6px 12px; background: #f0f2f5; font-size: 14px; }
+    .wa-filters .on { background: #d8fdd2; color: #008069; font-weight: 700; }
+    .gmail-top { height: 64px; padding: 0 8px 0 4px; }
+    .gmail-search { display: flex; align-items: center; gap: 10px; flex: 1; margin: 0; background: #eef3fd; color: #444; }
+    .gmail-tabs { display: flex; border-bottom: 1px solid #e8eaed; }
+    .gmail-tabs span { flex: 1; text-align: center; padding: 12px 0; color: #5f6368; font-size: 13px; font-weight: 650; }
+    .gmail-tabs .on { color: #0b57d0; box-shadow: inset 0 -3px 0 #0b57d0; }
+    .gmail-row { grid-template-columns: 28px 1fr auto; align-items: start; }
+    .gmail-check { width: 18px; height: 18px; border: 2px solid #5f6368; border-radius: 2px; margin-top: 4px; }
+    .gmail-row b { display: block; font-size: 14px; }
+    .gmail-row p { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 230px; }
+    .screen[data-channel="sms"] .bubble.reader { background: #34c759; }
+    .screen[data-channel="whatsapp"] .nav { background: #008069; border-color: #008069; color: #fff; }
+    .screen[data-channel="whatsapp"] .nav .icon-btn,
+    .screen[data-channel="whatsapp"] .status { color: rgba(255, 255, 255, .82); }
+    .screen[data-channel="whatsapp"] .avatar { background: #d8fdd2; color: #075e54; }
+    .screen[data-channel="whatsapp"] .thread {
+      background-color: #efe7de;
+      background-image: radial-gradient(rgba(84, 62, 36, .16) 0.7px, transparent 0.7px);
+      background-size: 14px 14px;
+    }
+    .screen[data-channel="whatsapp"] .bubble { font-size: 15px; box-shadow: 0 1px 0.5px rgba(0, 0, 0, .13); }
+    .screen[data-channel="whatsapp"] .bubble.reader { background: #d9fdd3; color: #111; border-radius: 8px 0 8px 8px; }
+    .screen[data-channel="whatsapp"] .bubble.times { background: #fff; border-radius: 0 8px 8px 8px; }
+    .screen[data-channel="whatsapp"] .card { background: #fff; border-radius: 8px; box-shadow: 0 1px 0.5px rgba(0, 0, 0, .13); }
+    .screen[data-channel="whatsapp"] .composer { background: #f0f2f5; }
+    .screen[data-channel="whatsapp"] .send { background: #00a884; }
+    .screen[data-channel="whatsapp"] .chips button { color: #008069; background: #fff; }
+    .wa-meta { display: block; margin-top: 3px; color: #667781; font-size: 11px; text-align: right; }
+    .bubble.reader .wa-meta { color: #4f8d67; }
+    .screen[data-channel="email"] { font-family: "Libre Franklin", "Helvetica Neue", sans-serif; }
+    .screen[data-channel="email"] .nav { background: #fff; }
+    .screen[data-channel="email"] .contact { align-items: flex-start; padding-left: 4px; }
+    .screen[data-channel="email"] .avatar { display: none; }
+    .screen[data-channel="email"] .contact strong { font-size: 16px; font-weight: 650; }
+    .screen[data-channel="email"] .thread { background: #fff; gap: 0; padding-top: 0; }
+    .screen[data-channel="email"] .stamp { display: none; }
+    .screen[data-channel="email"] .card { background: transparent; border-radius: 0; padding: 8px 0; }
+    .screen[data-channel="email"] .story { grid-template-columns: 1fr; }
+    .screen[data-channel="email"] .story img { width: 100%; height: 132px; }
+    .screen[data-channel="email"] .composer { background: #fff; border-top: 1px solid #e8eaed; }
+    .screen[data-channel="email"] textarea { border-radius: 24px; background: #f2f4f7; box-shadow: none; }
+    .screen[data-channel="email"] .send { border-radius: 50%; background: #0b57d0; }
+    .screen[data-channel="email"] .chips button { color: #0b57d0; background: #eef3fd; box-shadow: none; }
+    .mail { padding: 16px 4px; border-bottom: 1px solid #e8eaed; }
+    .mail header { display: flex; gap: 10px; align-items: center; }
+    .mail-avatar {
+      width: 40px; height: 40px; border-radius: 50%; background: #174ea6; color: #fff;
+      display: grid; place-items: center; font-weight: 700; flex: 0 0 auto;
+    }
+    .mail.mine .mail-avatar { background: #5f6368; }
+    .mail header div { flex: 1; min-width: 0; }
+    .mail header strong { display: block; font-size: 14px; }
+    .mail header span, .mail time { color: #5f6368; font-size: 12px; }
+    .mail-body { margin: 8px 0 0 50px; font-size: 14px; line-height: 1.45; }
     @media (max-width: 480px) {
       .stage { padding: 0; background: #fff; }
       .device { width: 100%; height: 100vh; height: 100dvh; }
@@ -351,20 +405,41 @@
               <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0.5" y="0.5" width="21" height="11" rx="2.5" fill="none" stroke="#111"/><rect x="2" y="2" width="16" height="8" rx="1" fill="#111"/><rect x="22.5" y="4" width="1.5" height="4" rx="0.5" fill="#111"/></svg>
             </span>
           </div>
-          <header class="nav">
-            <div class="icon-btn" aria-hidden="true">
-              <svg width="12" height="20" viewBox="0 0 12 20"><path d="M10 2 L2 10 L10 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="launcher" id="launcher">
+            <div>
+              <div class="lock-clock">9:41</div>
+              <div class="lock-date">Thursday, October 15</div>
             </div>
+            <div class="app-grid" aria-label="Choose an app">
+              <button class="app-launch" type="button" data-open="SMS">
+                <span class="app-glyph sms" aria-hidden="true"><svg width="34" height="34" viewBox="0 0 34 34"><path d="M8 8 h14 a4 4 0 0 1 4 4 v7 a4 4 0 0 1-4 4 h-6 l-5 5 v-5 h-3 a4 4 0 0 1-4-4 v-7 a4 4 0 0 1 4-4 z" fill="#fff"/></svg></span>
+                SMS
+              </button>
+              <button class="app-launch" type="button" data-open="WhatsApp">
+                <span class="app-glyph whatsapp" aria-hidden="true"><svg width="34" height="34" viewBox="0 0 34 34"><path d="M17 7 a10 10 0 0 0-8.6 15 l-1.2 4.4 4.5-1.2 A10 10 0 1 0 17 7z" fill="#fff"/><path d="M14.2 13.4 c.2-.5.4-.5.7-.5 h.6 c.2 0 .4 0 .5.4 l.8 1.9 c.1.2 0 .4-.2.6 l-.5.6 c-.1.2-.1.4 0 .6 c.4.7 1.1 1.4 1.8 1.8 c.2.1.4.1.6 0 l.6-.5 c.2-.2.4-.2.6-.1 l1.9.8 c.3.1.4.3.4.5 v.6 c0 .3 0 .5-.5.7 c-.4.2-1 .4-1.7.3 c-1.8-.3-4.3-2.2-5.2-4.6 c-.4-1.1-.2-2 .2-2.7 z" fill="#25d366"/></svg></span>
+                WhatsApp
+              </button>
+              <button class="app-launch" type="button" data-open="Email">
+                <span class="app-glyph gmail" aria-hidden="true"><svg width="36" height="28" viewBox="0 0 36 28"><path d="M2 4 h32 v20 h-32 z" fill="#fff"/><path d="M2 4 l16 12 l16-12" fill="none" stroke="#ea4335" stroke-width="3"/><path d="M2 4 v20" stroke="#4285f4" stroke-width="4"/><path d="M34 4 v20" stroke="#34a853" stroke-width="4"/><path d="M2 24 h32" stroke="#fbbc04" stroke-width="4"/></svg></span>
+                Gmail
+              </button>
+            </div>
+          </div>
+          <div id="inbox" hidden></div>
+          <div id="conversation" hidden>
+          <header class="nav">
+            <button class="icon-btn" id="back" type="button" aria-label="Back">
+              <svg width="12" height="20" viewBox="0 0 12 20"><path d="M10 2 L2 10 L10 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
             <div class="contact">
               <div class="avatar" aria-hidden="true">T</div>
-              <strong>The Times</strong>
+              <strong id="contact-name">The Times</strong>
               <div class="status" id="status" data-state="none">Text Message</div>
             </div>
             <button class="icon-btn" id="info" type="button" aria-label="Message details" aria-expanded="false">
               <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="11" cy="7" r="1" fill="currentColor"/><path d="M11 10 v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
             </button>
           </header>
-          <div class="channel-bar" id="channel-bar" aria-label="Preview delivery channel"></div>
           <div class="thread" id="thread" aria-live="polite"></div>
           <div class="composer">
             <div class="chips" id="chips"></div>
@@ -374,8 +449,9 @@
                 <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13 V3 M8 3 L3.5 7.5 M8 3 L12.5 7.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </button>
             </form>
-            <div class="home" aria-hidden="true"><span></span></div>
           </div>
+          </div>
+          <div class="home" aria-hidden="true"><span></span></div>
           <div class="sheet" id="sheet" hidden>
             <div class="sheet-handle"></div>
             <div class="sheet-top">
@@ -415,7 +491,7 @@
       },
       Email: {
         key: "email",
-        label: "Email",
+        label: "Gmail",
         noun: "email",
         plural: "emails",
         start: "Start email updates",
@@ -429,22 +505,37 @@
       { label: "One answer only", text: "Show me The Times guide to Paris. Don't text me." }
     ];
     const MONTHS = ["Jan.", "Feb.", "March", "April", "May", "June", "July", "Aug.", "Sept.", "Oct.", "Nov.", "Dec."];
-    const thread = [];
-    const service = {
-      state: "none",
-      scope: "Not set",
-      channel: "SMS",
-      cadence: "Only when a retrieved story is new inside the window",
-      end: "When you say you are home",
-      endDate: "",
-      consent: null,
-      pendingConfirmationId: null,
-      log: []
+    function createSession(channel) {
+      return {
+        thread: [],
+        service: {
+          state: "none",
+          scope: "Not set",
+          channel,
+          cadence: "Only when a retrieved story is new inside the window",
+          end: "When you say you are home",
+          endDate: "",
+          consent: null,
+          pendingConfirmationId: null,
+          log: []
+        },
+        latest: null,
+        confirmationSequence: 0
+      };
+    }
+    const sessions = {
+      SMS: createSession("SMS"),
+      WhatsApp: createSession("WhatsApp"),
+      Email: createSession("Email")
     };
+    let view = "home";
+    let activeChannel = "SMS";
+    let thread = sessions.SMS.thread;
+    let service = sessions.SMS.service;
+    let latest = null;
     let confirmationSequence = 0;
     let busy = false;
     let windowDays = 14;
-    let latest = null;
 
     const threadEl = document.querySelector("#thread");
     const chipsEl = document.querySelector("#chips");
@@ -453,7 +544,10 @@
     const composer = document.querySelector("#composer");
     const windowInput = document.querySelector("#window");
     const screenEl = document.querySelector(".screen");
-    const channelBarEl = document.querySelector("#channel-bar");
+    const launcherEl = document.querySelector("#launcher");
+    const inboxEl = document.querySelector("#inbox");
+    const conversationEl = document.querySelector("#conversation");
+    const contactNameEl = document.querySelector("#contact-name");
 
     function el(tag, attrs = {}, children = []) {
       const node = document.createElement(tag);
@@ -526,22 +620,40 @@
       return CHANNELS[service.channel];
     }
 
-    function selectChannel(channel) {
-      if (!CHANNELS[channel]) return;
-      if (service.state === "active" || service.state === "paused") return;
-      service.channel = channel;
+    function rememberSession() {
+      const session = sessions[activeChannel];
+      session.latest = latest;
+      session.confirmationSequence = confirmationSequence;
+    }
+
+    function useSession(channel) {
+      rememberSession();
+      activeChannel = channel;
+      const session = sessions[channel];
+      thread = session.thread;
+      service = session.service;
+      latest = session.latest;
+      confirmationSequence = session.confirmationSequence;
+    }
+
+    function openApp(channel) {
+      if (busy || !sessions[channel]) return;
+      useSession(channel);
+      view = "list";
       render();
     }
 
-    function channelSelector(className = "channel-choice") {
-      return el("div", { class: className, role: "group", "aria-label": "Delivery channel" },
-        Object.keys(CHANNELS).map(channel => el("button", {
-          type: "button",
-          "aria-pressed": service.channel === channel ? "true" : "false",
-          disabled: service.state === "active" || service.state === "paused" ? "" : null,
-          onclick: () => selectChannel(channel)
-        }, CHANNELS[channel].label))
-      );
+    function openThread() {
+      view = "thread";
+      render();
+    }
+
+    function goBack() {
+      if (busy) return;
+      view = view === "thread" ? "list" : "home";
+      document.querySelector("#sheet").hidden = true;
+      document.querySelector("#info").setAttribute("aria-expanded", "false");
+      render();
     }
 
     function planQueries(text) {
@@ -608,9 +720,9 @@
       const channel = channelConfig();
       const end = service.endDate ? ` or ${formatDate(service.endDate + "T00:00:00Z")}, whichever is first` : "";
       return {
-        none: `${channel.label} preview`,
+        none: channel.key === "whatsapp" ? "online" : channel.key === "email" ? "nytimes.com" : "Text Message",
         awaiting: "Reply to confirm",
-        active: `Sending via ${channel.label} until you're home${end}`,
+        active: channel.key === "email" ? `Updates until you're home${end}` : `Until you're home${end}`,
         paused: "Paused",
         cancelled: "Stopped"
       }[service.state];
@@ -677,7 +789,7 @@
     function lessen() {
       if (service.state !== "active" && service.state !== "awaiting") return;
       service.cadence = "At most once a week, and only when a story is new inside the window";
-      thread.push({ type: "times", text: "Cadence changed. I will send at most one text a week, and only when there is a meaningful update. Scope and end stay the same." });
+      thread.push({ type: "times", text: `Cadence changed. I will send at most one ${channelConfig().noun} a week, and only when there is a meaningful update. Scope and end stay the same.` });
       addLog("No send", "Reader opted down.");
       render();
     }
@@ -765,13 +877,11 @@
         el("div", { class: "meta" }, "Confirm before any recurring update"),
         el("h2", {}, pending ? "I heard a request for follow-up. I have not started it." : snapshot ? "This is what you approved." : "Follow-up stayed off."),
         el("p", {}, `Scope: ${scope}`),
-        el("p", {}, `Channel: ${selectedChannel}. Cadence: ${cadence.toLowerCase()}.`),
+        el("p", {}, `Channel: ${channel.label}. Cadence: ${cadence.toLowerCase()}.`),
         el("p", {}, "Ends when you say you are home. You can say less often, pause, or stop. One-time questions do not enroll you.")
       ]);
       if (!pending) return card;
       card.append(
-        el("p", { class: "meta" }, "Where should The Times reach you?"),
-        channelSelector(),
         el("p", { class: "channel-note" }, channel.requirement),
         el("label", { class: "inline" }, [
           "Optional end date",
@@ -799,21 +909,112 @@
       return card;
     }
 
+    function renderMail(kind, content) {
+      const outgoing = kind === "reader";
+      return el("article", { class: outgoing ? "mail mine" : "mail" }, [
+        el("header", {}, [
+          el("div", { class: "mail-avatar" }, outgoing ? "Me" : "T"),
+          el("div", {}, [
+            el("strong", {}, outgoing ? "Me" : "The New York Times"),
+            el("span", {}, outgoing ? "to The Times" : "to me")
+          ]),
+          el("time", {}, "9:41 AM")
+        ]),
+        el("div", { class: "mail-body" }, content.nodeType ? content : String(content))
+      ]);
+    }
+
+    function renderBubble(kind, content, label) {
+      if (channelConfig().key === "email") return renderMail(kind, content);
+      const bubble = el("div", { class: `bubble ${kind}`, "aria-label": label || null }, content.nodeType ? content : String(content));
+      if (channelConfig().key === "whatsapp" && kind !== "typing") bubble.append(el("span", { class: "wa-meta" }, kind === "reader" ? "9:41  ✓✓" : "9:41"));
+      return bubble;
+    }
+
     function renderThread() {
       threadEl.replaceChildren();
-      threadEl.append(el("div", { class: "stamp" }, "Today 9:41 AM"));
+      if (channelConfig().key !== "email") threadEl.append(el("div", { class: "stamp" }, "Today 9:41 AM"));
       if (!thread.length) {
-        threadEl.append(el("div", { class: "bubble times" }, "Ask the way you’d ask someone you trust. A question gets an answer. I won’t keep sending updates unless you start that."));
+        const intro = channelConfig().key === "email"
+          ? "Ask in a reply. You will get one email back. Recurring updates start only after you confirm them in this thread."
+          : "Ask the way you’d ask someone you trust. A question gets an answer. I won’t keep sending updates unless you start that.";
+        threadEl.append(renderBubble("times", intro));
       }
       thread.forEach(message => {
-        if (message.type === "reader") threadEl.append(el("div", { class: "bubble reader" }, message.text));
-        if (message.type === "times") threadEl.append(el("div", { class: "bubble times" }, message.text));
-        if (message.type === "pending") threadEl.append(el("div", { class: "bubble times typing", "aria-label": "The Times is typing" }, [el("span"), el("span"), el("span")]));
-        if (message.type === "brief") threadEl.append(renderBrief(message));
-        if (message.type === "confirm") threadEl.append(renderConfirm(message));
-        if (message.type === "update") threadEl.append(renderUpdate(message));
+        if (message.type === "reader") threadEl.append(renderBubble("reader", message.text));
+        if (message.type === "times") threadEl.append(renderBubble("times", message.text));
+        if (message.type === "pending") {
+          threadEl.append(channelConfig().key === "email"
+            ? renderMail("times", "Finding Times reporting…")
+            : el("div", { class: "bubble times typing", "aria-label": "The Times is typing" }, [el("span"), el("span"), el("span")]));
+        }
+        if (message.type === "brief") threadEl.append(channelConfig().key === "email" ? renderMail("times", renderBrief(message)) : renderBrief(message));
+        if (message.type === "confirm") threadEl.append(channelConfig().key === "email" ? renderMail("times", renderConfirm(message)) : renderConfirm(message));
+        if (message.type === "update") threadEl.append(channelConfig().key === "email" ? renderMail("times", renderUpdate(message)) : renderUpdate(message));
       });
       threadEl.scrollTop = threadEl.scrollHeight;
+    }
+
+    function previewText() {
+      for (let index = thread.length - 1; index >= 0; index -= 1) {
+        const message = thread[index];
+        if (message.type === "reader" || message.type === "times") return message.text;
+        if (message.type === "brief") return "A grounded brief is ready";
+        if (message.type === "confirm") return "Confirm before updates start";
+        if (message.type === "update") return message.articles.length ? "A new update is ready" : "No meaningful update";
+      }
+      return "Ask The Times what you need, where you need it";
+    }
+
+    function renderInbox() {
+      const preview = previewText();
+      const open = el("button", { type: "button", onclick: openThread });
+      if (service.channel === "WhatsApp") {
+        open.className = "wa-row";
+        open.append(
+          el("div", { class: "row-avatar" }, "T"),
+          el("div", {}, [el("strong", {}, "The Times"), el("p", {}, preview)]),
+          el("time", {}, "9:41 AM")
+        );
+        inboxEl.replaceChildren(
+          el("div", { class: "wa-top" }, [el("button", { type: "button", onclick: goBack, "aria-label": "Back to apps" }, "‹"), "WhatsApp"]),
+          el("div", { class: "wa-filters" }, [el("span", { class: "on" }, "Chats"), el("span", {}, "Updates"), el("span", {}, "Calls")]),
+          open
+        );
+        return;
+      }
+      if (service.channel === "Email") {
+        open.className = "gmail-row";
+        open.append(
+          el("span", { class: "gmail-check", "aria-hidden": "true" }),
+          el("div", {}, [el("strong", {}, "The New York Times"), el("b", {}, "Paris, when you need it"), el("p", {}, preview)]),
+          el("time", {}, "9:41 AM")
+        );
+        inboxEl.replaceChildren(
+          el("div", { class: "gmail-top" }, [
+            el("button", { type: "button", onclick: goBack, "aria-label": "Back to apps" }, "‹"),
+            el("div", { class: "gmail-search" }, "Search in mail")
+          ]),
+          el("div", { class: "gmail-tabs" }, [el("span", { class: "on" }, "Primary"), el("span", {}, "Promotions"), el("span", {}, "Social")]),
+          open
+        );
+        return;
+      }
+      open.className = "thread-row";
+      open.append(
+        el("div", { class: "row-avatar" }, "T"),
+        el("div", {}, [el("strong", {}, "The Times"), el("p", {}, preview)]),
+        el("time", {}, "9:41 AM")
+      );
+      inboxEl.replaceChildren(
+        el("div", { class: "list-top" }, [
+          el("button", { type: "button", onclick: goBack, "aria-label": "Back to apps" }, "‹"),
+          el("h1", {}, "Messages"),
+          el("button", { type: "button", onclick: openThread, "aria-label": "New message" }, "✎")
+        ]),
+        el("div", { class: "search-pill" }, "Search"),
+        open
+      );
     }
 
     function renderChips() {
@@ -881,13 +1082,26 @@
     }
 
     function render() {
+      rememberSession();
+      screenEl.dataset.view = view;
+      launcherEl.hidden = view !== "home";
+      inboxEl.hidden = view !== "list";
+      conversationEl.hidden = view !== "thread";
+      if (view === "home") {
+        screenEl.dataset.channel = "home";
+        return;
+      }
       const channel = channelConfig();
+      screenEl.dataset.channel = channel.key;
+      if (view === "list") {
+        renderInbox();
+        return;
+      }
+      contactNameEl.textContent = channel.key === "email" ? "Paris, when you need it" : "The Times";
       statusEl.textContent = statusCopy();
       statusEl.dataset.state = service.state;
-      screenEl.dataset.channel = channel.key;
       composer.placeholder = channel.placeholder;
       composer.disabled = busy;
-      channelBarEl.replaceChildren(...channelSelector("channel-choice").children);
       renderThread();
       renderChips();
       renderDesk();
@@ -911,7 +1125,7 @@
           service.pendingConfirmationId = ++confirmationSequence;
           thread.push({ type: "confirm", id: service.pendingConfirmationId, snapshot: null });
         } else if (service.state === "none" || service.state === "cancelled") {
-          thread.push({ type: "times", text: "This stays a one-time answer. I have not enrolled you in texts." });
+          thread.push({ type: "times", text: `This stays a one-time answer. I have not enrolled you in ${channelConfig().plural}.` });
         }
         addLog("Answer only", `${articles.length} stories retrieved. No recurring send.`);
       } catch (error) {
@@ -1009,6 +1223,10 @@
     document.querySelector("#sheet-close").addEventListener("click", () => {
       sheet.hidden = true;
       info.setAttribute("aria-expanded", "false");
+    });
+    document.querySelector("#back").addEventListener("click", goBack);
+    document.querySelectorAll("[data-open]").forEach(button => {
+      button.addEventListener("click", () => openApp(button.dataset.open));
     });
     render();
   </script>
