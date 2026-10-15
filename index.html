@@ -334,8 +334,10 @@
     .gmail-top { height: 64px; padding: 0 8px 0 4px; }
     .gmail-search { display: flex; align-items: center; gap: 10px; flex: 1; margin: 0; background: #eef3fd; color: #444; }
     .gmail-tabs { display: flex; border-bottom: 1px solid #e8eaed; }
-    .gmail-tabs span { flex: 1; text-align: center; padding: 12px 0; color: #5f6368; font-size: 13px; font-weight: 650; }
-    .gmail-tabs .on { color: #0b57d0; box-shadow: inset 0 -3px 0 #0b57d0; }
+    .gmail-tabs button { flex: 1; border: 0; background: transparent; padding: 12px 4px; color: #5f6368; font-size: 13px; font-weight: 650; }
+    .gmail-tabs button[aria-pressed="true"] { color: #0b57d0; box-shadow: inset 0 -3px 0 #0b57d0; }
+    .gmail-letter { padding: 8px 16px 24px; }
+    .gmail-letter h1 { margin: 16px 0 8px; font-size: 22px; line-height: 1.25; }
     .gmail-row { grid-template-columns: 28px 1fr auto; align-items: start; }
     .gmail-check { width: 18px; height: 18px; border: 2px solid #5f6368; border-radius: 2px; margin-top: 4px; }
     .gmail-row b { display: block; font-size: 14px; }
@@ -528,6 +530,20 @@
       WhatsApp: createSession("WhatsApp"),
       Email: createSession("Email")
     };
+    const GMAIL_FOLDERS = {
+      Updates: [
+        { from: "NYT Breaking News", subject: "French activists set to rally across France", snippet: "Another test of whether a nationwide protest movement holds.", time: "8:46 AM", body: "Breaking News is a broadcast alert. It is not an answer to a question you asked, and opening it does not start trip updates." },
+        { from: "NYT Breaking News", subject: "The wave of student protests roiling France", snippet: "Classroom overcrowding and teacher shortages have boiled over.", time: "8:11 AM", body: "This alert went to everyone who gets Breaking News. Ask The Times still waits for a separate confirmation before it emails you about your trip." },
+        { from: "NYT Breaking News", subject: "France’s long, fervent history of protest", snippet: "How this week compares with earlier movements.", time: "7:28 AM", body: "Breaking News can arrive several times in one morning. Each alert is its own email, separate from a two-way conversation." },
+        { from: "The Morning", subject: "The Morning: protests, politics, and the news to know", snippet: "What happened overnight, and what is worth your time today.", time: "6:03 AM", body: "The Morning is the daily briefing. It can mention the same events as a personal update, but it goes out on the newsletter schedule rather than because you asked." },
+        { from: "For You", subject: "For You: Paris, before you arrive", snippet: "A guide for the free hours between meetings.", time: "Yesterday", body: "For You is a recommendation based on what you read. It is not the grounded reply in your Primary conversation." }
+      ],
+      Promotions: [
+        { from: "The New York Times", subject: "All Access Sale", snippet: "Get unlimited access at our best rate. This offer ends Sunday.", time: "8:15 AM", body: "The All Access Sale is a promotion. It stays in Promotions and does not enroll you in email updates about your trip." }
+      ]
+    };
+    let gmailTab = "Primary";
+    let gmailLetter = null;
     let view = "home";
     let activeChannel = "SMS";
     let thread = sessions.SMS.thread;
@@ -650,6 +666,11 @@
 
     function goBack() {
       if (busy) return;
+      if (view === "list" && gmailLetter) {
+        gmailLetter = null;
+        render();
+        return;
+      }
       view = view === "thread" ? "list" : "home";
       document.querySelector("#sheet").hidden = true;
       document.querySelector("#info").setAttribute("aria-expanded", "false");
@@ -984,20 +1005,7 @@
         return;
       }
       if (service.channel === "Email") {
-        open.className = "gmail-row";
-        open.append(
-          el("span", { class: "gmail-check", "aria-hidden": "true" }),
-          el("div", {}, [el("strong", {}, "The New York Times"), el("b", {}, "Paris, when you need it"), el("p", {}, preview)]),
-          el("time", {}, "9:41 AM")
-        );
-        inboxEl.replaceChildren(
-          el("div", { class: "gmail-top" }, [
-            el("button", { type: "button", onclick: goBack, "aria-label": "Back to apps" }, "‹"),
-            el("div", { class: "gmail-search" }, "Search in mail")
-          ]),
-          el("div", { class: "gmail-tabs" }, [el("span", { class: "on" }, "Primary"), el("span", {}, "Promotions"), el("span", {}, "Social")]),
-          open
-        );
+        renderGmail(preview);
         return;
       }
       open.className = "thread-row";
@@ -1015,6 +1023,44 @@
         el("div", { class: "search-pill" }, "Search"),
         open
       );
+    }
+
+    function gmailRow(mail, onclick) {
+      return el("button", { type: "button", class: "gmail-row", onclick }, [
+        el("span", { class: "gmail-check", "aria-hidden": "true" }),
+        el("div", {}, [el("strong", {}, mail.from), el("b", {}, mail.subject), el("p", {}, mail.snippet)]),
+        el("time", {}, mail.time)
+      ]);
+    }
+
+    function renderGmail(preview) {
+      const top = el("div", { class: "gmail-top" }, [
+        el("button", { type: "button", onclick: goBack, "aria-label": gmailLetter ? "Back to inbox" : "Back to apps" }, "‹"),
+        el("div", { class: "gmail-search" }, gmailLetter ? gmailLetter.subject : "Search in mail")
+      ]);
+      if (gmailLetter) {
+        inboxEl.replaceChildren(
+          top,
+          el("article", { class: "gmail-letter" }, [
+            el("h1", {}, gmailLetter.subject),
+            el("p", { class: "meta" }, `${gmailLetter.from} · ${gmailLetter.time}`),
+            el("p", {}, gmailLetter.body)
+          ])
+        );
+        return;
+      }
+      const tabs = el("div", { class: "gmail-tabs", role: "tablist", "aria-label": "Inbox categories" },
+        ["Primary", "Updates", "Promotions"].map(tab => el("button", {
+          type: "button",
+          role: "tab",
+          "aria-pressed": gmailTab === tab ? "true" : "false",
+          onclick: () => { gmailTab = tab; render(); }
+        }, tab))
+      );
+      const rows = gmailTab === "Primary"
+        ? [gmailRow({ from: "The New York Times", subject: "Paris, when you need it", snippet: preview, time: "9:41 AM" }, openThread)]
+        : GMAIL_FOLDERS[gmailTab].map(mail => gmailRow(mail, () => { gmailLetter = mail; render(); }));
+      inboxEl.replaceChildren(top, tabs, ...rows);
     }
 
     function renderChips() {
