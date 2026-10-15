@@ -114,6 +114,39 @@
     .status { font-size: 11px; color: var(--muted); }
     .status[data-state="active"] { color: var(--good); }
     .status[data-state="awaiting"], .status[data-state="paused"] { color: var(--warn); }
+    .channel-bar {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3px;
+      padding: 6px 10px;
+      background: #f2f2f7;
+      border-bottom: 0.5px solid var(--line);
+      flex: 0 0 auto;
+    }
+    .channel-bar button, .channel-choice button {
+      border: 0;
+      border-radius: 8px;
+      padding: 6px 4px;
+      background: transparent;
+      color: #636366;
+      font-size: 12px;
+      font-weight: 650;
+    }
+    .channel-bar button[aria-pressed="true"], .channel-choice button[aria-pressed="true"] {
+      background: #fff;
+      color: #111;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, .12);
+    }
+    .channel-bar button:disabled { cursor: default; opacity: .55; }
+    .channel-choice {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3px;
+      margin: 8px 0;
+      padding: 3px;
+      border-radius: 11px;
+      background: #e5e5ea;
+    }
     .thread {
       flex: 1;
       overflow: auto;
@@ -254,8 +287,49 @@
     .log { list-style: none; padding: 0; margin: 0; font-size: 13px; }
     .log li { padding: 7px 0; border-top: 0.5px solid #d8d8de; }
     .note { color: #636366; font-size: 13px; }
+    .channel-note { padding: 9px 10px; border-radius: 10px; background: #fff; color: #636366; font-size: 12px; }
     label.inline { display: flex; align-items: center; gap: 8px; margin: 8px 0; font-size: 14px; }
     input[type="number"], input[type="date"] { border: 0; border-radius: 8px; padding: 6px 8px; background: #fff; }
+    .screen[data-channel="whatsapp"] .nav { background: #075e54; border-color: #075e54; color: #fff; }
+    .screen[data-channel="whatsapp"] .nav .icon-btn,
+    .screen[data-channel="whatsapp"] .status { color: rgba(255, 255, 255, .8); }
+    .screen[data-channel="whatsapp"] .thread { background: #efeae2; }
+    .screen[data-channel="whatsapp"] .bubble.reader { background: #d9fdd3; color: #111; }
+    .screen[data-channel="whatsapp"] .bubble.times { background: #fff; }
+    .screen[data-channel="whatsapp"] .composer { background: #efeae2; }
+    .screen[data-channel="whatsapp"] .send { background: #00a884; }
+    .screen[data-channel="whatsapp"] .chips button { color: #008069; }
+    .screen[data-channel="email"] .nav { grid-template-columns: 44px 1fr 44px; padding-bottom: 8px; }
+    .screen[data-channel="email"] .avatar { border-radius: 8px; }
+    .screen[data-channel="email"] .thread { background: #f6f8fc; gap: 12px; }
+    .screen[data-channel="email"] .bubble,
+    .screen[data-channel="email"] .card {
+      align-self: stretch;
+      max-width: none;
+      border-radius: 12px;
+      background: #fff;
+      color: #111;
+      box-shadow: 0 1px 3px rgba(60, 64, 67, .16);
+    }
+    .screen[data-channel="email"] .bubble.reader::before {
+      content: "To: The Times";
+      display: block;
+      margin-bottom: 5px;
+      color: #5f6368;
+      font-size: 11px;
+      font-weight: 650;
+    }
+    .screen[data-channel="email"] .bubble.times::before {
+      content: "From: The New York Times";
+      display: block;
+      margin-bottom: 5px;
+      color: #5f6368;
+      font-size: 11px;
+      font-weight: 650;
+    }
+    .screen[data-channel="email"] .composer { background: #fff; }
+    .screen[data-channel="email"] .send { border-radius: 8px; background: #1a73e8; }
+    .screen[data-channel="email"] .chips button { color: #1a73e8; }
     @media (max-width: 480px) {
       .stage { padding: 0; background: #fff; }
       .device { width: 100%; height: 100vh; height: 100dvh; }
@@ -290,6 +364,7 @@
               <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="11" cy="7" r="1" fill="currentColor"/><path d="M11 10 v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
             </button>
           </header>
+          <div class="channel-bar" id="channel-bar" aria-label="Preview delivery channel"></div>
           <div class="thread" id="thread" aria-live="polite"></div>
           <div class="composer">
             <div class="chips" id="chips"></div>
@@ -304,10 +379,10 @@
           <div class="sheet" id="sheet" hidden>
             <div class="sheet-handle"></div>
             <div class="sheet-top">
-              <h2>This text</h2>
+              <h2>This service</h2>
               <button class="plain" id="sheet-close" type="button">Done</button>
             </div>
-            <p class="note">Answers come from the NAPP search test. A text is offered only when a retrieved story is recent enough to cite. The query-signals model did not label these chunks.</p>
+            <p class="note">Answers come from the NAPP search test. A follow-up is offered only when a retrieved story is recent enough to cite. The query-signals model did not label these chunks.</p>
             <label class="inline">Window
               <input id="window" type="number" min="1" max="365" value="14" aria-label="Recency window in days">
               days
@@ -319,8 +394,37 @@
     </div>
   </div>
   <script>
+    const CHANNELS = {
+      SMS: {
+        key: "sms",
+        label: "SMS",
+        noun: "text",
+        plural: "texts",
+        start: "Start SMS updates",
+        placeholder: "Text Message",
+        requirement: "Requires a registered US A2P sender, carrier-compliant opt-in, STOP/HELP handling, and segment-aware copy."
+      },
+      WhatsApp: {
+        key: "whatsapp",
+        label: "WhatsApp",
+        noun: "WhatsApp message",
+        plural: "WhatsApp messages",
+        start: "Start WhatsApp updates",
+        placeholder: "Message",
+        requirement: "Requires WhatsApp opt-in and an approved utility template whenever The Times initiates outside the 24-hour service window."
+      },
+      Email: {
+        key: "email",
+        label: "Email",
+        noun: "email",
+        plural: "emails",
+        start: "Start email updates",
+        placeholder: "Reply",
+        requirement: "Requires a verified sending domain, authenticated mail, deliverability monitoring, unsubscribe links, and preference suppression."
+      }
+    };
     const STARTERS = [
-      { label: "Paris trip", text: "I'll arrive in Paris two days early to explore, then have only pockets of free time between meetings. Help me make it count. Share the canonical Paris must-sees and local recommendations, and keep me current on protests, transit, and other disruptions that could affect my plans. Text me concise updates, and stop when I get home." },
+      { label: "Paris trip", text: "I'll arrive in Paris two days early to explore, then have only pockets of free time between meetings. Help me make it count. Share the canonical Paris must-sees and local recommendations, and keep me current on protests, transit, and other disruptions that could affect my plans. Send me concise updates, and stop when I get home." },
       { label: "What changed?", text: "I've been away a few days. What changed, and what should I read to catch up on Paris?" },
       { label: "One answer only", text: "Show me The Times guide to Paris. Don't text me." }
     ];
@@ -346,6 +450,8 @@
     const statusEl = document.querySelector("#status");
     const composer = document.querySelector("#composer");
     const windowInput = document.querySelector("#window");
+    const screenEl = document.querySelector(".screen");
+    const channelBarEl = document.querySelector("#channel-bar");
 
     function el(tag, attrs = {}, children = []) {
       const node = document.createElement(tag);
@@ -411,7 +517,29 @@
     function wantsFollowUp(text) {
       const value = text.toLowerCase();
       if (/\b(?:do not|don't|dont)\s+text\b/.test(value)) return false;
-      return /\b(?:text me|keep me|follow up|until i|posted|updates)\b/.test(value);
+      return /\b(?:text me|send me|email me|whatsapp me|keep me|follow up|until i|posted|updates)\b/.test(value);
+    }
+
+    function channelConfig() {
+      return CHANNELS[service.channel];
+    }
+
+    function selectChannel(channel) {
+      if (!CHANNELS[channel]) return;
+      if (service.state === "active" || service.state === "paused") return;
+      service.channel = channel;
+      render();
+    }
+
+    function channelSelector(className = "channel-choice") {
+      return el("div", { class: className, role: "group", "aria-label": "Delivery channel" },
+        Object.keys(CHANNELS).map(channel => el("button", {
+          type: "button",
+          "aria-pressed": service.channel === channel ? "true" : "false",
+          disabled: service.state === "active" || service.state === "paused" ? "" : null,
+          onclick: () => selectChannel(channel)
+        }, CHANNELS[channel].label))
+      );
     }
 
     function planQueries(text) {
@@ -475,11 +603,12 @@
     }
 
     function statusCopy() {
+      const channel = channelConfig();
       const end = service.endDate ? ` or ${formatDate(service.endDate + "T00:00:00Z")}, whichever is first` : "";
       return {
-        none: "Text Message",
+        none: `${channel.label} preview`,
         awaiting: "Reply to confirm",
-        active: `Texting until you're home${end}`,
+        active: `Sending via ${channel.label} until you're home${end}`,
         paused: "Paused",
         cancelled: "Stopped"
       }[service.state];
@@ -487,11 +616,12 @@
 
     function activate(fromButton) {
       if (service.state !== "awaiting") return;
-      if (fromButton) thread.push({ type: "reader", text: "Start texts until I am home." });
+      const channel = channelConfig();
+      if (fromButton) thread.push({ type: "reader", text: `${channel.start} until I am home.` });
       service.state = "active";
       service.consent = new Date().toISOString();
       const end = service.endDate ? `, or on ${formatDate(service.endDate + "T00:00:00Z")}, whichever comes first` : "";
-      thread.push({ type: "times", text: `Started. I will text only about this Paris trip, only when a retrieved Times story is new within ${windowDays} days, and I will stop when you say you are home${end}. Say less often, pause, or stop. This is not a safety monitor.` });
+      thread.push({ type: "times", text: `Started via ${channel.label}. I will send only about this Paris trip, only when a retrieved Times story is new within ${windowDays} days, and I will stop when you say you are home${end}. Say less often, pause, or stop. This is not a safety monitor.` });
       addLog("No send", "Consent recorded. No story qualified at activation.");
       render();
     }
@@ -500,7 +630,7 @@
       if (service.state !== "awaiting") return;
       service.state = "none";
       if (!alreadySpoken) thread.push({ type: "reader", text: "Just this answer." });
-      thread.push({ type: "times", text: "Understood. I will not text you about this. The answer above stands on its own." });
+      thread.push({ type: "times", text: `Understood. I will not send ${channelConfig().plural} about this. The answer above stands on its own.` });
       addLog("No send", "Reader declined follow-up.");
       render();
     }
@@ -508,7 +638,7 @@
     function pauseService() {
       if (service.state !== "active") return;
       service.state = "paused";
-      thread.push({ type: "times", text: "Paused. I will not text until you say resume." });
+      thread.push({ type: "times", text: `Paused. I will not send another ${channelConfig().noun} until you say resume.` });
       addLog("Suppressed", "Reader paused the service.");
       render();
     }
@@ -524,7 +654,7 @@
     function stopService() {
       if (service.state !== "active" && service.state !== "paused") return;
       service.state = "cancelled";
-      thread.push({ type: "times", text: "Stopped. I will not text about this trip. You can still ask a one-time question." });
+      thread.push({ type: "times", text: `Stopped. I will not send ${channelConfig().plural} about this trip. You can still ask a one-time question.` });
       addLog("Suppressed", "Reader stopped the service. Queued sends are cancelled.");
       render();
     }
@@ -553,7 +683,7 @@
           el("h3", {}, [url ? el("a", { href: url, target: "_blank", rel: "noopener" }, article.title) : article.title]),
           el("p", {}, `${article.byline ? article.byline + " · " : ""}${freshness}`),
           article.summary ? el("p", {}, article.summary) : null,
-          el("p", { class: canText(article, now) ? "in" : "out" }, canText(article, now) ? "Recent enough to cite in a text" : "Not a trip text")
+          el("p", { class: canText(article, now) ? "in" : "out" }, canText(article, now) ? "Recent enough to cite in an update" : "Not a trip update")
         ])
       ]);
     }
@@ -596,7 +726,7 @@
           card.append(el("p", {}, "I used the planning search only. I did not run a separate protest or transit search for this question."));
         } else if (!recent.length) {
           card.append(el("p", {}, `No Paris or France story from those searches was published or updated in the last ${windowDays} days.`));
-          card.append(el("p", {}, closest ? `The closest is ${closest.age} days old: ${closest.article.title}. No meaningful update, so there is no text to send.` : "No meaningful update."));
+          card.append(el("p", {}, closest ? `The closest is ${closest.age} days old: ${closest.article.title}. No meaningful update, so there is nothing to send.` : "No meaningful update."));
         } else {
           card.append(el("p", {}, `There is recent Times reporting on protests in France. ${recent.length} ${recent.length === 1 ? "story is" : "stories are"} inside ${windowDays} days. I would cite these. I do not have a retrieved story that says your flights, trains, or meetings are disrupted.`));
           recent.slice(0, 3).forEach(article => card.append(storyNode(article, now)));
@@ -611,8 +741,9 @@
 
     function renderConfirm() {
       const pending = service.state === "awaiting";
+      const channel = channelConfig();
       const card = el("div", { class: "card" }, [
-        el("div", { class: "meta" }, "Confirm before any text"),
+        el("div", { class: "meta" }, "Confirm before any recurring update"),
         el("h2", {}, pending ? "I heard a request for follow-up. I have not started it." : "Follow-up stayed off until this confirmation."),
         el("p", {}, `Scope: ${service.scope}`),
         el("p", {}, `Channel: ${service.channel}. Cadence: ${service.cadence.toLowerCase()}.`),
@@ -620,12 +751,15 @@
       ]);
       if (!pending) return card;
       card.append(
+        el("p", { class: "meta" }, "Where should The Times reach you?"),
+        channelSelector(),
+        el("p", { class: "channel-note" }, channel.requirement),
         el("label", { class: "inline" }, [
           "Optional end date",
           el("input", { type: "date", value: service.endDate, onchange: event => { service.endDate = event.target.value; } })
         ]),
         el("div", { class: "actions" }, [
-          el("button", { class: "plain primary", type: "button", onclick: () => activate(true) }, "Start texts"),
+          el("button", { class: "plain primary", type: "button", onclick: () => activate(true) }, channel.start),
           el("button", { class: "plain", type: "button", onclick: () => decline(false) }, "Just this answer")
         ])
       );
@@ -650,7 +784,7 @@
       threadEl.replaceChildren();
       threadEl.append(el("div", { class: "stamp" }, "Today 9:41 AM"));
       if (!thread.length) {
-        threadEl.append(el("div", { class: "bubble times" }, "Text me the way you’d text someone you trust. A question gets an answer. I won’t keep texting unless you start that."));
+        threadEl.append(el("div", { class: "bubble times" }, "Ask the way you’d ask someone you trust. A question gets an answer. I won’t keep sending updates unless you start that."));
       }
       thread.forEach(message => {
         if (message.type === "reader") threadEl.append(el("div", { class: "bubble reader" }, message.text));
@@ -669,7 +803,7 @@
         STARTERS.forEach(starter => chips.push(el("button", { type: "button", onclick: () => send(starter.text) }, starter.label)));
       }
       if (service.state === "awaiting") {
-        chips.push(el("button", { type: "button", onclick: () => activate(true) }, "Start texts"));
+        chips.push(el("button", { type: "button", onclick: () => activate(true) }, channelConfig().start));
         chips.push(el("button", { type: "button", onclick: () => decline(false) }, "Just this answer"));
         chips.push(el("button", { type: "button", onclick: () => { thread.push({ type: "reader", text: "Less often." }); lessen(); } }, "Less often"));
       }
@@ -701,7 +835,7 @@
       const nodes = [facts, el("h2", {}, "Query signals"), rule, classifier];
       if (latest) {
         const recentCount = latest.articles.filter(article => canText(article, now)).length;
-        nodes.push(el("p", {}, `${recentCount} ${recentCount === 1 ? "story is" : "stories are"} recent enough to cite, out of ${latest.articles.length} retrieved. Prototype decision: ${recentCount ? "a text can cite those stories" : "no meaningful update"}. A planning guide is not treated as a disruption, and stories that do not mention Paris or France stay out of the text.`));
+        nodes.push(el("p", {}, `${recentCount} ${recentCount === 1 ? "story is" : "stories are"} recent enough to cite, out of ${latest.articles.length} retrieved. Prototype decision: ${recentCount ? "an update can cite those stories" : "no meaningful update"}. A planning guide is not treated as a disruption, and stories that do not mention Paris or France stay out of the update.`));
         latest.data.searches.forEach(search => nodes.push(el("p", {}, el("a", { href: search.sourceUrl, target: "_blank", rel: "noopener" }, search.query))));
         const table = el("table", {}, [
           el("thead", {}, el("tr", {}, ["Story", "Published", "Updated", "Text?"].map(label => el("th", {}, label)))),
@@ -714,15 +848,27 @@
         ]);
         nodes.push(table);
       }
+      nodes.push(
+        el("h2", {}, "Channel implications"),
+        el("p", { class: "note" }, "SMS is the baseline reach channel. It needs A2P sender registration, explicit consent, STOP/HELP, carrier delivery receipts, suppression, and segment-aware copy. MMS is optional; links and concise text are enough for this MVP."),
+        el("p", { class: "note" }, "RCS should be a progressive enhancement to SMS, not a required channel. It adds verified branding, article cards, and suggested replies, but needs device capability checks and SMS fallback."),
+        el("p", { class: "note" }, "WhatsApp needs a Business Platform provider, WhatsApp-specific opt-in, approved utility templates outside the 24-hour service window, quality monitoring, and market-based billing."),
+        el("p", { class: "note" }, "Email needs a delivery provider, SPF/DKIM/DMARC, bounce and complaint processing, one-click unsubscribe, preference suppression, and responsive templates."),
+        el("p", { class: "note" }, "Apple Messages for Business can support opted-in direct-interest updates, but requires an Apple-approved messaging service provider and Apple review. Treat it as a later iOS extension.")
+      );
       nodes.push(el("h2", {}, "Send log"));
       nodes.push(service.log.length ? el("ul", { class: "log" }, service.log.map(entry => el("li", {}, `${entry.decision}: ${entry.reason}`))) : el("p", { class: "note" }, "No send has been attempted."));
       deskEl.replaceChildren(...nodes);
     }
 
     function render() {
+      const channel = channelConfig();
       statusEl.textContent = statusCopy();
       statusEl.dataset.state = service.state;
+      screenEl.dataset.channel = channel.key;
+      composer.placeholder = channel.placeholder;
       composer.disabled = busy;
+      channelBarEl.replaceChildren(...channelSelector("channel-choice").children);
       renderThread();
       renderChips();
       renderDesk();
