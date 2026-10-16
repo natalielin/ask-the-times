@@ -114,8 +114,8 @@
     .status { font-size: 11px; color: var(--muted); }
     .status[data-state="active"] { color: var(--good); }
     .status[data-state="awaiting"], .status[data-state="paused"] { color: var(--warn); }
-    .launcher, #inbox, #conversation { flex: 1; min-height: 0; }
-    .launcher[hidden], #inbox[hidden], #conversation[hidden] { display: none !important; }
+    .launcher, #inbox, #conversation, #prefs { flex: 1; min-height: 0; }
+    .launcher[hidden], #inbox[hidden], #conversation[hidden], #prefs[hidden] { display: none !important; }
     #conversation { display: flex; flex-direction: column; }
     .launcher {
       display: flex;
@@ -338,6 +338,99 @@
     .gmail-tabs button[aria-pressed="true"] { color: #0b57d0; box-shadow: inset 0 -3px 0 #0b57d0; }
     .gmail-letter { padding: 8px 16px 24px; }
     .gmail-letter h1 { margin: 16px 0 8px; font-size: 22px; line-height: 1.25; }
+    .email-footer { margin-top: 18px; padding-top: 12px; border-top: 1px solid #dadce0; color: #5f6368; font-size: 11px; line-height: 1.45; }
+    .email-footer p { margin: 0 0 6px; }
+    .email-footer button { border: 0; padding: 0; background: none; color: #5f6368; font-size: 11px; text-decoration: underline; }
+    #prefs {
+      --ink: #121212;
+      --muted: #666;
+      --line: #ddd;
+      --accent: #326891;
+      --ok: #267c30;
+      --ok-soft: #e8f5e9;
+      --danger: #d0021b;
+      overflow: auto;
+      background: #f0f0f0;
+      color: var(--ink);
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    #prefs .up-back {
+      position: sticky; top: 0; z-index: 2; display: block; width: 100%; text-align: left;
+      border: 0; border-bottom: 1px solid var(--line); background: #f0f0f0; color: var(--accent);
+      font-weight: 700; font-size: 13px; padding: 10px 14px;
+    }
+    #prefs .up-lead { padding: 14px 14px 4px; }
+    #prefs .up-rest { padding: 4px 14px 28px; }
+    #prefs .up-brand { margin: 0 0 6px; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+    #prefs h1 { margin: 0 0 6px; font-size: 22px; font-weight: 700; letter-spacing: -.01em; line-height: 1.2; }
+    #prefs .up-lede { margin: 0 0 12px; color: var(--muted); font-size: 13px; }
+    #prefs .up-success { background: var(--ok-soft); border: 1px solid #b7dfbc; border-left: 3px solid var(--ok); border-radius: 2px; padding: 10px 12px; margin: 0 0 12px; }
+    #prefs .up-success strong { display: block; color: var(--ok); margin-bottom: 2px; }
+    #prefs .up-success p { margin: 0; }
+    #prefs .snapshot { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 14px; }
+    #prefs .snapshot span { font-size: 11px; font-weight: 600; letter-spacing: .02em; text-transform: uppercase; padding: 4px 8px; border-radius: 2px; background: #fff; border: 1px solid var(--line); color: var(--muted); }
+    #prefs .snapshot em { font-style: normal; color: var(--ok); font-weight: 700; }
+    #prefs .section-label { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 14px 0 6px; padding-bottom: 4px; border-bottom: 1px solid var(--line); }
+    #prefs .section-note { font-size: 12px; color: var(--muted); margin: 0 0 10px; }
+    #prefs .beta-tag { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: 1px 5px; border-radius: 2px; margin-left: 6px; vertical-align: middle; }
+    #prefs .sub-card, #prefs .drawer, #prefs .text-row, #prefs .discover-card { background: #fff; border: 1px solid var(--line); border-radius: 2px; }
+    #prefs .sub-card { overflow: hidden; margin-bottom: 8px; }
+    #prefs .sub-card.is-pilot { border-left: 3px solid var(--accent); }
+    #prefs .sub-card.is-pilot .sub-main { cursor: default; }
+    #prefs .sub-card.is-expanded { border-color: var(--accent); }
+    #prefs .sub-main, #prefs .compact-main, #prefs .drawer-toggle, #prefs .discover-card, #prefs .text-row button, #prefs .choice {
+      font-family: inherit; text-align: left; cursor: pointer;
+    }
+    #prefs .sub-main { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: start; width: 100%; padding: 12px; border: 0; background: transparent; color: inherit; }
+    #prefs .sub-kicker { margin: 0 0 4px; font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+    #prefs .sub-title { margin: 0 0 4px; font-size: 15px; font-weight: 700; letter-spacing: -.01em; }
+    #prefs .sub-blurb { margin: 0 0 6px; font-size: 12px; color: var(--muted); }
+    #prefs .sub-meta { display: flex; flex-wrap: wrap; gap: 4px; }
+    #prefs .sub-meta span, #prefs .compact-meta { font-size: 10px; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; }
+    #prefs .sub-meta span { padding: 2px 6px; border-radius: 2px; background: #f5f5f5; border: 1px solid var(--line); color: var(--muted); }
+    #prefs .sub-meta .is-on { color: var(--ok); border-color: #b7d7bb; background: var(--ok-soft); }
+    #prefs .sub-cta, #prefs .compact-cta, #prefs .discover-cta { font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--accent); }
+    #prefs .sub-cta { padding: 6px 10px; border-radius: 2px; border: 1px solid var(--accent); background: #fff; white-space: nowrap; }
+    #prefs .sub-panel, #prefs .compact-panel { display: none; padding: 0 12px 12px; border-top: 1px solid var(--line); background: #fafafa; }
+    #prefs .is-expanded .sub-panel, #prefs .is-expanded .compact-panel { display: block; }
+    #prefs .choice { display: block; width: 100%; background: #fff; border: 1px solid var(--line); border-radius: 2px; padding: 8px 10px; margin: 8px 0 0; color: var(--ink); }
+    #prefs .choice.is-current { border-color: var(--accent); background: #e8f0f6; }
+    #prefs .choice.is-danger { color: var(--danger); }
+    #prefs .choice:disabled { opacity: .45; cursor: not-allowed; }
+    #prefs .choice strong { display: block; font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+    #prefs .choice span, #prefs .text-row span, #prefs .discover-copy span, #prefs .compact-meta { font-size: 12px; color: var(--muted); font-weight: 400; letter-spacing: 0; text-transform: none; }
+    #prefs .compact-meta .is-on { color: var(--ok); font-weight: 700; }
+    #prefs .compact-meta .is-warn { color: #b85c00; font-weight: 700; }
+    #prefs .find-row input { width: 100%; font-family: inherit; font-size: 13px; padding: 7px 10px; border: 1px solid #bbb; border-radius: 2px; background: #fff; color: var(--ink); margin-bottom: 8px; }
+    #prefs .drawer { margin-bottom: 8px; overflow: hidden; }
+    #prefs .drawer-toggle { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; padding: 10px 12px; border: 0; background: #fafafa; color: inherit; }
+    #prefs .drawer-toggle strong { display: block; font-size: 13px; font-weight: 600; }
+    #prefs .drawer-toggle span { font-size: 12px; color: var(--muted); }
+    #prefs .drawer-chevron { flex-shrink: 0; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--accent); padding: 4px 8px; border: 1px solid var(--line); border-radius: 2px; background: #fff; }
+    #prefs .drawer-body { display: none; border-top: 1px solid var(--line); }
+    #prefs .drawer.is-open .drawer-body { display: block; }
+    #prefs .compact-row { border-bottom: 1px solid var(--line); }
+    #prefs .compact-row:last-child { border-bottom: 0; }
+    #prefs .compact-main { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; width: 100%; padding: 8px 12px; border: 0; background: transparent; color: inherit; }
+    #prefs .compact-row.is-expanded .compact-main { background: #e8f0f6; }
+    #prefs .compact-title { margin: 0 0 2px; font-size: 13px; font-weight: 600; }
+    #prefs .text-row { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; padding: 10px 12px; margin-bottom: 6px; }
+    #prefs .text-row strong { display: block; font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+    #prefs .text-row .door { margin: 4px 0 0; font-size: 11px; color: #b85c00; }
+    #prefs .text-row button, #prefs .push-manage { font-family: inherit; font-size: 12px; font-weight: 600; border-radius: 2px; border: 1px solid var(--accent); padding: 6px 12px; background: var(--accent); color: #fff; }
+    #prefs .text-row button.is-on, #prefs .push-manage { background: #fff; color: var(--accent); }
+    #prefs .discover-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 16px 0 8px; padding-top: 8px; border-top: 1px solid var(--line); }
+    #prefs .discover-head h2 { margin: 0; font-size: 15px; font-weight: 700; }
+    #prefs .discover-head p { margin: 0; font-size: 12px; color: var(--muted); }
+    #prefs .discover-card { display: grid; grid-template-columns: 48px 1fr auto; gap: 10px; align-items: center; width: 100%; padding: 8px; margin-bottom: 6px; color: inherit; border: 1px solid var(--line); }
+    #prefs .discover-card.is-open { border-color: var(--accent); background: #e8f0f6; }
+    #prefs .discover-thumb { width: 48px; height: 48px; border-radius: 2px; display: flex; align-items: flex-end; padding: 4px; font-size: 10px; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: .03em; }
+    #prefs .tone-a { background: #326891; } #prefs .tone-b { background: #555; } #prefs .tone-c { background: #267c30; } #prefs .tone-d { background: #b85c00; } #prefs .tone-e { background: #5c4b8a; }
+    #prefs .discover-copy strong { display: block; font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+    #prefs .discover-panel { margin: -6px 0 6px; padding: 10px 12px; background: #fff; border: 1px solid var(--line); border-top: 0; border-radius: 0 0 2px 2px; }
+    #prefs .discover-panel p { margin: 0 0 8px; font-size: 12px; color: var(--muted); }
     .gmail-row { grid-template-columns: 28px 1fr auto; align-items: start; }
     .gmail-check { width: 18px; height: 18px; border: 2px solid #5f6368; border-radius: 2px; margin-top: 4px; }
     .gmail-row b { display: block; font-size: 14px; }
@@ -453,6 +546,7 @@
             </form>
           </div>
           </div>
+          <div id="prefs" hidden></div>
           <div class="home" aria-hidden="true"><span></span></div>
           <div class="sheet" id="sheet" hidden>
             <div class="sheet-handle"></div>
@@ -460,7 +554,7 @@
               <h2>This service</h2>
               <button class="plain" id="sheet-close" type="button">Done</button>
             </div>
-            <p class="note">Answers come from the NAPP search test. A follow-up is offered only when a retrieved story is recent enough to cite. The query-signals model did not label these chunks.</p>
+            <p class="note">Answers come from the NAPP search test. A request that covers a time period turns on automatic updates until that period ends. Less often and one-time replace that baseline. The query-signals model did not label these chunks.</p>
             <label class="inline">Window
               <input id="window" type="number" min="1" max="365" value="14" aria-label="Recency window in days">
               days
@@ -514,10 +608,11 @@
           state: "none",
           scope: "Not set",
           channel,
-          cadence: "Only when a retrieved story is new inside the window",
+          cadence: "Automatically, whenever a retrieved story is new during this period",
           end: "When you say you are home",
           endDate: "",
           consent: null,
+          preference: "none",
           pendingConfirmationId: null,
           log: []
         },
@@ -532,16 +627,44 @@
     };
     const GMAIL_FOLDERS = {
       Updates: [
-        { from: "NYT Breaking News", subject: "French activists set to rally across France", snippet: "Another test of whether a nationwide protest movement holds.", time: "8:46 AM", body: "Breaking News is a broadcast alert. It is not an answer to a question you asked, and opening it does not start trip updates." },
-        { from: "NYT Breaking News", subject: "The wave of student protests roiling France", snippet: "Classroom overcrowding and teacher shortages have boiled over.", time: "8:11 AM", body: "This alert went to everyone who gets Breaking News. Ask The Times still waits for a separate confirmation before it emails you about your trip." },
-        { from: "NYT Breaking News", subject: "France’s long, fervent history of protest", snippet: "How this week compares with earlier movements.", time: "7:28 AM", body: "Breaking News can arrive several times in one morning. Each alert is its own email, separate from a two-way conversation." },
-        { from: "The Morning", subject: "The Morning: protests, politics, and the news to know", snippet: "What happened overnight, and what is worth your time today.", time: "6:03 AM", body: "The Morning is the daily briefing. It can mention the same events as a personal update, but it goes out on the newsletter schedule rather than because you asked." },
-        { from: "For You", subject: "For You: Paris, before you arrive", snippet: "A guide for the free hours between meetings.", time: "Yesterday", body: "For You is a recommendation based on what you read. It is not the grounded reply in your Primary conversation." }
+        { product: "breaking", from: "NYT Breaking News", subject: "French activists set to rally across France", snippet: "Another test of whether a nationwide protest movement holds.", time: "8:46 AM", body: "Breaking News is a broadcast alert. It is not an answer to a question you asked, and opening it does not start trip updates." },
+        { product: "breaking", from: "NYT Breaking News", subject: "The wave of student protests roiling France", snippet: "Classroom overcrowding and teacher shortages have boiled over.", time: "8:11 AM", body: "This alert went to everyone who gets Breaking News. Ask The Times still sends trip updates on their own schedule." },
+        { product: "breaking", from: "NYT Breaking News", subject: "France’s long, fervent history of protest", snippet: "How this week compares with earlier movements.", time: "7:28 AM", body: "Breaking News can arrive several times in one morning. Each alert is its own email, separate from a two-way conversation." },
+        { product: "morning", from: "The Morning", subject: "The Morning: protests, politics, and the news to know", snippet: "What happened overnight, and what is worth your time today.", time: "6:03 AM", body: "The Morning is the daily briefing. It can mention the same events as a personal update, but it goes out on the newsletter schedule rather than because you asked." },
+        { product: "forYou", from: "For You", subject: "For You: Paris, before you arrive", snippet: "A guide for the free hours between meetings.", time: "Yesterday", body: "For You is a recommendation based on what you read. It is not the grounded reply in your Primary conversation." }
       ],
       Promotions: [
-        { from: "The New York Times", subject: "All Access Sale", snippet: "Get unlimited access at our best rate. This offer ends Sunday.", time: "8:15 AM", body: "The All Access Sale is a promotion. It stays in Promotions and does not enroll you in email updates about your trip." }
+        { product: "sale", from: "The New York Times", subject: "All Access Sale", snippet: "Get unlimited access at our best rate. This offer ends Sunday.", time: "8:15 AM", body: "The All Access Sale is a promotion. It stays in Promotions and does not enroll you in email updates about your trip." }
       ]
     };
+    const EMAIL_PRODUCTS = {
+      ask: { id: "ask", name: "Ask The Times", cadence: "During this period", subscribed: true, blurb: "Grounded answers and updates for a question you asked, for as long as you need them." },
+      morning: { id: "morning", name: "The Morning", cadence: "Weekday mornings", subscribed: true, blurb: "The day’s most important stories, curated for your inbox." },
+      breaking: { id: "breaking", name: "Breaking News", cadence: "As it happens", subscribed: true, blurb: "Alerts when a major story breaks. Not a reply to a question you asked." },
+      forYou: { id: "forYou", name: "For You", cadence: "A few times a week", subscribed: true, blurb: "Stories chosen from what you read." },
+      sale: { id: "sale", name: "All Access Sale", cadence: "Occasional", subscribed: true, blurb: "Occasional offers for unlimited access." },
+      cooking: { id: "cooking", name: "NYT Cooking", cadence: "Few times a week", subscribed: false, blurb: "Recipes and tips.", thumb: "Cooking", tone: "tone-d" },
+      games: { id: "games", name: "Wordle & Games", cadence: "Daily", subscribed: false, blurb: "Reminders and streaks for your daily puzzles.", thumb: "Games", tone: "tone-e" },
+      athletic: { id: "athletic", name: "The Athletic", cadence: "Daily", subscribed: false, blurb: "Team coverage and analysis for fans who want depth.", thumb: "Sports", tone: "tone-b" },
+      wirecutter: { id: "wirecutter", name: "Wirecutter", cadence: "Weekly", subscribed: false, blurb: "Product recommendations when something worth buying changes.", thumb: "Advice", tone: "tone-c" },
+      opinion: { id: "opinion", name: "Opinion Today", cadence: "Weekdays", subscribed: false, blurb: "Opinion columns and essays.", thumb: "Opinion", tone: "tone-a" }
+    };
+    Object.values(EMAIL_PRODUCTS).forEach(item => { item.base = item.cadence; item.reduced = false; item.paused = false; });
+    const textChannels = {
+      SMS: { title: "SMS", blurb: "Short text messages to your phone number on file.", on: false },
+      MMS: { title: "MMS", blurb: "Texts that can include images or richer media.", on: false },
+      WhatsApp: { title: "WhatsApp", blurb: "Messages via WhatsApp on your verified number.", on: false },
+      RCS: { title: "RCS", blurb: "Richer chat-style messages where your carrier supports them.", on: false }
+    };
+    let pushOn = true;
+    let preferenceProduct = null;
+    let preferenceOutcome = "unsubscribed";
+    let preferenceChannel = "";
+    let preferenceReturn = "list";
+    let prefsQuery = "";
+    let prefsDrawerOpen = false;
+    let prefsExpandedId = null;
+    let prefsDiscoverId = null;
     let gmailTab = "Primary";
     let gmailLetter = null;
     let view = "home";
@@ -564,6 +687,7 @@
     const inboxEl = document.querySelector("#inbox");
     const conversationEl = document.querySelector("#conversation");
     const contactNameEl = document.querySelector("#contact-name");
+    const prefsEl = document.querySelector("#prefs");
 
     function el(tag, attrs = {}, children = []) {
       const node = document.createElement(tag);
@@ -743,43 +867,53 @@
       return {
         none: channel.key === "whatsapp" ? "online" : channel.key === "email" ? "nytimes.com" : "Text Message",
         awaiting: "Reply to confirm",
-        active: channel.key === "email" ? `Updates until you're home${end}` : `Until you're home${end}`,
+        active: `${service.preference === "less-often" ? "Less often" : "Updates"} until you're home${end}`,
         paused: "Paused",
-        cancelled: "Stopped"
+        cancelled: service.preference === "one-time" ? "One answer" : "Stopped"
       }[service.state];
     }
 
-    function activate(fromButton) {
-      if (service.state !== "awaiting") return;
-      const channel = channelConfig();
-      if (fromButton) thread.push({ type: "reader", text: `${channel.start} until I am home.` });
-      const confirmation = thread.find(message => message.type === "confirm" && message.id === service.pendingConfirmationId);
-      const consent = {
-        at: new Date().toISOString(),
+    function currentConsent(preference) {
+      return {
+        at: service.consent?.at || new Date().toISOString(),
         channel: service.channel,
         scope: service.scope,
         cadence: service.cadence,
         end: service.end,
         endDate: service.endDate,
-        windowDays
+        windowDays,
+        preference
       };
-      if (confirmation) confirmation.snapshot = consent;
-      service.state = "active";
-      service.consent = consent;
-      service.pendingConfirmationId = null;
-      const end = service.endDate ? `, or on ${formatDate(service.endDate + "T00:00:00Z")}, whichever comes first` : "";
-      thread.push({ type: "times", text: `Started via ${channel.label}. I will send only about ${service.scope.toLowerCase()}, only when a retrieved Times story is new within ${windowDays} days, and I will stop when you say you are home${end}. Say less often, pause, or stop. This is not a safety monitor.` });
-      addLog("No send", "Consent recorded. No story qualified at activation.");
-      render();
     }
 
-    function decline(alreadySpoken) {
-      if (service.state !== "awaiting") return;
-      service.state = "none";
-      service.pendingConfirmationId = null;
+    function rememberConsent(preference) {
+      const confirmation = thread.find(message => message.type === "confirm" && message.id === service.pendingConfirmationId);
+      service.preference = preference;
+      service.consent = currentConsent(preference);
+      if (confirmation) confirmation.snapshot = { ...service.consent };
+    }
+
+    function beginAutomation() {
+      service.state = "active";
+      service.preference = "automated";
+      service.cadence = "Automatically, whenever a retrieved story is new during this period";
+      service.pendingConfirmationId = ++confirmationSequence;
+      thread.push({ type: "confirm", id: service.pendingConfirmationId, snapshot: null });
+      rememberConsent("automated");
+      addLog("Automated", "Baseline alerting is on for this period. No override yet.");
+    }
+
+    function chooseOneTime(alreadySpoken) {
+      if (service.state !== "active" && service.state !== "paused") return;
       if (!alreadySpoken) thread.push({ type: "reader", text: "Just this answer." });
-      thread.push({ type: "times", text: `Understood. I will not send ${channelConfig().plural} about this. The answer above stands on its own.` });
-      addLog("No send", "Reader declined follow-up.");
+      service.cadence = "One-time answer. Automated updates are off.";
+      rememberConsent("one-time");
+      const confirmation = thread.find(message => message.type === "confirm" && message.id === service.pendingConfirmationId);
+      if (confirmation) confirmation.closed = true;
+      service.pendingConfirmationId = null;
+      service.state = "cancelled";
+      thread.push({ type: "times", text: `Understood. This stays a one-time answer, so I will not send more ${channelConfig().plural} about this period.` });
+      addLog("Override", "One-time preference replaced automated alerting.");
       render();
     }
 
@@ -801,6 +935,11 @@
 
     function stopService() {
       if (service.state !== "active" && service.state !== "paused") return;
+      service.cadence = "Stopped. Automated updates are off.";
+      rememberConsent("stopped");
+      const confirmation = thread.find(message => message.type === "confirm" && message.id === service.pendingConfirmationId);
+      if (confirmation) confirmation.closed = true;
+      service.pendingConfirmationId = null;
       service.state = "cancelled";
       thread.push({ type: "times", text: `Stopped. I will not send ${channelConfig().plural} about this trip. You can still ask a one-time question.` });
       addLog("Suppressed", "Reader stopped the service. Queued sends are cancelled.");
@@ -808,10 +947,11 @@
     }
 
     function lessen() {
-      if (service.state !== "active" && service.state !== "awaiting") return;
-      service.cadence = "At most once a week, and only when a story is new inside the window";
-      thread.push({ type: "times", text: `Cadence changed. I will send at most one ${channelConfig().noun} a week, and only when there is a meaningful update. Scope and end stay the same.` });
-      addLog("No send", "Reader opted down.");
+      if ((service.state !== "active" && service.state !== "paused") || service.preference === "less-often") return;
+      service.cadence = "Opted down: at most once a week during this period, and only when a story is new";
+      rememberConsent("less-often");
+      thread.push({ type: "times", text: `Less often replaces the automatic cadence. I will send at most one ${channelConfig().noun} a week during this period, and only when there is a meaningful update.` });
+      addLog("Override", "Opt-down replaced the automatic cadence. Alerting stays on.");
       render();
     }
 
@@ -888,29 +1028,33 @@
     }
 
     function renderConfirm(message) {
-      const pending = service.state === "awaiting" && service.pendingConfirmationId === message.id;
-      const snapshot = message.snapshot;
-      const selectedChannel = pending ? service.channel : snapshot?.channel || service.channel;
-      const channel = CHANNELS[selectedChannel];
-      const scope = snapshot?.scope || service.scope;
-      const cadence = snapshot?.cadence || service.cadence;
+      const live = !message.closed && service.pendingConfirmationId === message.id && (service.state === "active" || service.state === "paused");
+      const snapshot = live ? service.consent : message.snapshot;
+      const channel = CHANNELS[snapshot?.channel] || channelConfig();
+      const preference = snapshot?.preference || "automated";
+      const heading = {
+        automated: "Updates are on automatically until you say you are home.",
+        "less-often": "Updates stay on, less often, until you say you are home.",
+        "one-time": "You chose one answer. Automated updates are off.",
+        stopped: "You stopped the updates."
+      }[preference] || "Updates are on automatically until you say you are home.";
       const card = el("div", { class: "card" }, [
-        el("div", { class: "meta" }, "Confirm before any recurring update"),
-        el("h2", {}, pending ? "I heard a request for follow-up. I have not started it." : snapshot ? "This is what you approved." : "Follow-up stayed off."),
-        el("p", {}, `Scope: ${scope}`),
-        el("p", {}, `Channel: ${channel.label}. Cadence: ${cadence.toLowerCase()}.`),
-        el("p", {}, "Ends when you say you are home. You can say less often, pause, or stop. One-time questions do not enroll you.")
+        el("div", { class: "meta" }, "This period"),
+        el("h2", {}, heading),
+        el("p", {}, `Scope: ${snapshot?.scope || service.scope}`),
+        el("p", {}, `Channel: ${channel.label}. Cadence: ${(snapshot?.cadence || service.cadence).toLowerCase()}.`),
+        el("p", {}, "Less often and just this answer override the automatic alerts. If you leave them, updates continue through this period. This is not a safety monitor.")
       ]);
-      if (!pending) return card;
+      if (!live || preference === "one-time" || preference === "stopped") return card;
       card.append(
         el("p", { class: "channel-note" }, channel.requirement),
         el("label", { class: "inline" }, [
           "Optional end date",
-          el("input", { type: "date", value: service.endDate, onchange: event => { service.endDate = event.target.value; } })
+          el("input", { type: "date", value: service.endDate, onchange: event => { service.endDate = event.target.value; rememberConsent(service.preference); } })
         ]),
         el("div", { class: "actions" }, [
-          el("button", { class: "plain primary", type: "button", onclick: () => activate(true) }, channel.start),
-          el("button", { class: "plain", type: "button", onclick: () => decline(false) }, "Just this answer")
+          preference === "automated" ? el("button", { class: "plain", type: "button", onclick: () => { thread.push({ type: "reader", text: "Less often." }); lessen(); } }, "Less often") : null,
+          el("button", { class: "plain", type: "button", onclick: () => chooseOneTime(false) }, "Just this answer")
         ])
       );
       return card;
@@ -930,9 +1074,18 @@
       return card;
     }
 
-    function renderMail(kind, content) {
+    function emailFooter(productId) {
+      const product = EMAIL_PRODUCTS[productId];
+      return el("footer", { class: "email-footer" }, [
+        el("p", {}, `You received this email because you subscribe to ${product.name}.`),
+        el("p", {}, el("button", { type: "button", onclick: () => openPreferences(productId) }, `Unsubscribe from ${product.name}`)),
+        el("p", {}, "The New York Times Company · 620 Eighth Avenue, New York, NY 10018")
+      ]);
+    }
+
+    function renderMail(kind, content, productId) {
       const outgoing = kind === "reader";
-      return el("article", { class: outgoing ? "mail mine" : "mail" }, [
+      const article = el("article", { class: outgoing ? "mail mine" : "mail" }, [
         el("header", {}, [
           el("div", { class: "mail-avatar" }, outgoing ? "Me" : "T"),
           el("div", {}, [
@@ -943,10 +1096,12 @@
         ]),
         el("div", { class: "mail-body" }, content.nodeType ? content : String(content))
       ]);
+      if (productId) article.append(emailFooter(productId));
+      return article;
     }
 
     function renderBubble(kind, content, label) {
-      if (channelConfig().key === "email") return renderMail(kind, content);
+      if (channelConfig().key === "email") return renderMail(kind, content, kind === "reader" ? null : "ask");
       const bubble = el("div", { class: `bubble ${kind}`, "aria-label": label || null }, content.nodeType ? content : String(content));
       if (channelConfig().key === "whatsapp" && kind !== "typing") bubble.append(el("span", { class: "wa-meta" }, kind === "reader" ? "9:41  ✓✓" : "9:41"));
       return bubble;
@@ -956,9 +1111,7 @@
       threadEl.replaceChildren();
       if (channelConfig().key !== "email") threadEl.append(el("div", { class: "stamp" }, "Today 9:41 AM"));
       if (!thread.length) {
-        const intro = channelConfig().key === "email"
-          ? "Ask in a reply. You will get one email back. Recurring updates start only after you confirm them in this thread."
-          : "Ask the way you’d ask someone you trust. A question gets an answer. I won’t keep sending updates unless you start that.";
+        const intro = "Ask the way you’d ask someone you trust. If you ask me to keep you current for a period, I send updates automatically until it ends. Less often or just this answer overrides that.";
         threadEl.append(renderBubble("times", intro));
       }
       thread.forEach(message => {
@@ -1044,7 +1197,8 @@
           el("article", { class: "gmail-letter" }, [
             el("h1", {}, gmailLetter.subject),
             el("p", { class: "meta" }, `${gmailLetter.from} · ${gmailLetter.time}`),
-            el("p", {}, gmailLetter.body)
+            el("p", {}, gmailLetter.body),
+            emailFooter(gmailLetter.product)
           ])
         );
         return;
@@ -1068,14 +1222,10 @@
       if (service.state === "none" || service.state === "cancelled") {
         STARTERS.forEach(starter => chips.push(el("button", { type: "button", onclick: () => send(starter.text) }, starter.label)));
       }
-      if (service.state === "awaiting") {
-        chips.push(el("button", { type: "button", onclick: () => activate(true) }, channelConfig().start));
-        chips.push(el("button", { type: "button", onclick: () => decline(false) }, "Just this answer"));
-        chips.push(el("button", { type: "button", onclick: () => { thread.push({ type: "reader", text: "Less often." }); lessen(); } }, "Less often"));
-      }
       if (service.state === "active") {
         chips.push(el("button", { type: "button", onclick: () => send("Anything new?") }, "Anything new?"));
-        chips.push(el("button", { type: "button", onclick: () => { thread.push({ type: "reader", text: "Less often." }); lessen(); } }, "Less often"));
+        if (service.preference === "automated") chips.push(el("button", { type: "button", onclick: () => { thread.push({ type: "reader", text: "Less often." }); lessen(); } }, "Less often"));
+        chips.push(el("button", { type: "button", onclick: () => chooseOneTime(false) }, "Just this answer"));
         chips.push(el("button", { type: "button", onclick: () => { thread.push({ type: "reader", text: "Pause." }); pauseService(); } }, "Pause"));
         chips.push(el("button", { type: "button", onclick: () => { thread.push({ type: "reader", text: "Stop." }); stopService(); } }, "Stop"));
       }
@@ -1094,7 +1244,8 @@
         el("dt", {}, "Channel"), el("dd", {}, service.channel),
         el("dt", {}, "Cadence"), el("dd", {}, service.cadence),
         el("dt", {}, "End"), el("dd", {}, service.endDate ? `${service.end} or ${formatDate(service.endDate + "T00:00:00Z")}` : service.end),
-        el("dt", {}, "Consent"), el("dd", {}, service.consent ? `${formatDate(service.consent.at)} · ${service.consent.channel} · ${service.consent.windowDays}-day window` : "Not recorded")
+        el("dt", {}, "Preference"), el("dd", {}, service.preference),
+        el("dt", {}, "Consent"), el("dd", {}, service.consent ? `${formatDate(service.consent.at)} · ${service.consent.channel} · ${service.consent.preference}` : "Not recorded")
       ]);
       const rule = el("p", { class: "note" }, latest ? latest.data.rule.text : "Latest News fires when there is at least 1 HIGH-relevance chunk, or at least 3 HIGH/MEDIUM-relevance chunks, published or updated within 14 days.");
       const classifier = el("p", { class: "note" }, latest ? latest.data.rule.classifier : "Ask a question to retrieve from the NAPP test.");
@@ -1127,12 +1278,273 @@
       deskEl.replaceChildren(...nodes);
     }
 
+    function openPreferences(productId) {
+      const product = EMAIL_PRODUCTS[productId];
+      preferenceReturn = view;
+      preferenceProduct = productId;
+      preferenceOutcome = "unsubscribed";
+      preferenceChannel = "";
+      prefsQuery = "";
+      prefsDrawerOpen = false;
+      prefsExpandedId = null;
+      prefsDiscoverId = null;
+      product.subscribed = false;
+      product.reduced = false;
+      product.paused = false;
+      product.cadence = product.base;
+      view = "prefs";
+      render();
+      prefsEl.scrollTop = 0;
+    }
+
+    function optDownInstead() {
+      const product = EMAIL_PRODUCTS[preferenceProduct];
+      if (preferenceChannel && textChannels[preferenceChannel]) textChannels[preferenceChannel].on = false;
+      product.subscribed = true;
+      product.reduced = true;
+      product.paused = false;
+      product.cadence = "Weekly";
+      preferenceOutcome = "opt-down";
+      preferenceChannel = "";
+      render();
+    }
+
+    function subscribeChannel(channel) {
+      const product = EMAIL_PRODUCTS[preferenceProduct];
+      product.subscribed = false;
+      product.reduced = false;
+      product.paused = false;
+      product.cadence = product.base;
+      if (preferenceChannel && preferenceChannel !== channel && textChannels[preferenceChannel]) textChannels[preferenceChannel].on = false;
+      textChannels[channel].on = true;
+      preferenceOutcome = "channel";
+      preferenceChannel = channel;
+      render();
+    }
+
+    function stopThisProduct() {
+      const product = EMAIL_PRODUCTS[preferenceProduct];
+      if (preferenceChannel && textChannels[preferenceChannel]) textChannels[preferenceChannel].on = false;
+      product.subscribed = false;
+      product.reduced = false;
+      product.paused = false;
+      product.cadence = product.base;
+      preferenceOutcome = "unsubscribed";
+      preferenceChannel = "";
+      render();
+    }
+
+    function preferenceCopy() {
+      const product = EMAIL_PRODUCTS[preferenceProduct];
+      if (preferenceOutcome === "opt-down") return ["Opted down", `${product.name} stays on, at most once a week. The full unsubscribe was replaced.`];
+      if (preferenceOutcome === "channel") return ["Subscribed to another channel", `You remain unsubscribed from ${product.name} by email. ${preferenceChannel} is now on for this product.`];
+      return ["Unsubscribed", `You will no longer receive ${product.name} by email. Your other subscriptions are unchanged.`];
+    }
+
+    function preferenceChoice(title, detail, { current = false, danger = false, disabled = false, onclick }) {
+      return el("button", {
+        type: "button",
+        class: `choice${current ? " is-current" : ""}${danger ? " is-danger" : ""}`,
+        "aria-pressed": current ? "true" : "false",
+        disabled: disabled ? "" : null,
+        onclick
+      }, [el("strong", {}, title), el("span", {}, detail)]);
+    }
+
+    function productStatus(item) {
+      if (item.paused) return ["Paused", "is-warn"];
+      if (item.reduced) return ["Fewer", "is-warn"];
+      if (item.subscribed) return ["On", "is-on"];
+      return ["Off", ""];
+    }
+
+    function productControls(item) {
+      const [label] = productStatus(item);
+      return [
+        preferenceChoice("Get fewer", "Major developments only, or weekly max", {
+          current: label === "Fewer",
+          onclick: () => { item.subscribed = true; item.reduced = true; item.paused = false; item.cadence = "Weekly"; render(); }
+        }),
+        preferenceChoice("Pause", "Take a break. Resume anytime.", {
+          current: label === "Paused",
+          onclick: () => { item.subscribed = true; item.paused = true; item.reduced = false; render(); }
+        }),
+        preferenceChoice("Resume", "Turn this back on now", {
+          current: false,
+          disabled: !item.paused,
+          onclick: () => { item.paused = false; item.subscribed = true; render(); }
+        }),
+        preferenceChoice("Stop this newsletter", "Doesn’t affect your other emails or push.", {
+          current: label === "Off",
+          danger: true,
+          onclick: () => { item.subscribed = false; item.reduced = false; item.paused = false; item.cadence = item.base; render(); }
+        })
+      ];
+    }
+
+    function focusedCard(product) {
+      const optedDown = preferenceOutcome === "opt-down";
+      const status = optedDown ? "Fewer" : "Off";
+      return el("article", { class: "sub-card is-pilot is-expanded" }, [
+        el("div", { class: "sub-main" }, [
+          el("div", {}, [
+            el("p", { class: "sub-kicker" }, "From this email"),
+            el("h2", { class: "sub-title" }, product.name),
+            el("p", { class: "sub-blurb" }, product.blurb),
+            el("div", { class: "sub-meta" }, [
+              el("span", {}, "Email"),
+              el("span", {}, optedDown ? "Weekly" : product.base),
+              el("span", { class: optedDown ? "is-on" : "" }, status)
+            ])
+          ])
+        ]),
+        el("div", { class: "sub-panel" }, [
+          preferenceChoice("Get fewer", "Keep this email, at most once a week.", { current: optedDown, onclick: optDownInstead }),
+          preferenceChoice("Get this by SMS", "Same product, as a text instead of this email.", { current: preferenceChannel === "SMS", onclick: () => subscribeChannel("SMS") }),
+          preferenceChoice("Get this by WhatsApp", "Same product, on WhatsApp instead of this email.", { current: preferenceChannel === "WhatsApp", onclick: () => subscribeChannel("WhatsApp") }),
+          preferenceChoice("Stop this newsletter", "Doesn’t affect your other emails or push.", { current: !product.subscribed, danger: true, onclick: stopThisProduct })
+        ])
+      ]);
+    }
+
+    function renderPreferences() {
+      const [title, detail] = preferenceCopy();
+      const product = EMAIL_PRODUCTS[preferenceProduct];
+      const scroll = prefsEl.scrollTop;
+      const query = prefsQuery.trim().toLowerCase();
+      const others = Object.values(EMAIL_PRODUCTS).filter(item => item.id !== product.id && item.subscribed && (!query || `${item.name} ${item.blurb}`.toLowerCase().includes(query)));
+      const discover = Object.values(EMAIL_PRODUCTS).filter(item => item.id !== product.id && !item.subscribed);
+      const emailCount = Object.values(EMAIL_PRODUCTS).filter(item => item.subscribed).length;
+      const textCount = Object.values(textChannels).filter(channel => channel.on).length;
+      prefsEl.replaceChildren(
+        el("button", { type: "button", class: "up-back", onclick: () => { view = preferenceReturn; render(); } }, "Back to email"),
+        el("section", { class: "up-lead" }, [
+          el("p", { class: "up-brand" }, "The New York Times · Account"),
+          el("h1", {}, "Your updates"),
+          el("p", { class: "up-lede" }, "When you have a long list, we keep a few front and center — and tuck the rest into a drawer so nothing feels like an endless stack."),
+          el("div", { class: "up-success", role: "status" }, [el("strong", {}, title), el("p", {}, detail)]),
+          focusedCard(product)
+        ]),
+        el("section", { class: "up-rest" }, [
+          el("div", { class: "snapshot" }, [
+            el("span", {}, [el("em", {}, String(emailCount)), ` email newsletter${emailCount === 1 ? "" : "s"}`]),
+            el("span", {}, pushOn ? [el("em", {}, "Push"), " on"] : "Push off"),
+            el("span", {}, textCount ? [el("em", {}, String(textCount)), ` text channel${textCount === 1 ? "" : "s"}`] : "Text · beta · none yet")
+          ]),
+          el("p", { class: "section-label" }, "Email newsletters"),
+          el("p", { class: "section-note" }, "Everything else nests here. Open one row at a time to manage it."),
+          el("div", { class: "find-row" }, el("input", {
+            type: "search",
+            placeholder: "Find a newsletter",
+            value: prefsQuery,
+            "aria-label": "Find a newsletter",
+            oninput: event => {
+              prefsQuery = event.target.value;
+              const caret = event.target.selectionStart;
+              render();
+              const input = prefsEl.querySelector(".find-row input");
+              if (input) { input.focus(); input.setSelectionRange(caret, caret); }
+            }
+          })),
+          el("div", { class: `drawer${prefsDrawerOpen ? " is-open" : ""}` }, [
+            el("button", {
+              type: "button",
+              class: "drawer-toggle",
+              "aria-expanded": prefsDrawerOpen ? "true" : "false",
+              onclick: () => { prefsDrawerOpen = !prefsDrawerOpen; render(); }
+            }, [
+              el("div", {}, [
+                el("strong", {}, others.length === 1 ? "1 more email newsletter" : `${others.length} more email newsletters`),
+                el("span", {}, "Compact list — tap a row to manage")
+              ]),
+              el("span", { class: "drawer-chevron" }, prefsDrawerOpen ? "Hide" : "Show")
+            ]),
+            el("div", { class: "drawer-body" }, others.map(item => {
+              const [label, tone] = productStatus(item);
+              const open = prefsExpandedId === item.id;
+              return el("div", { class: `compact-row${open ? " is-expanded" : ""}` }, [
+                el("button", { type: "button", class: "compact-main", onclick: () => { prefsExpandedId = open ? null : item.id; render(); } }, [
+                  el("div", {}, [
+                    el("p", { class: "compact-title" }, item.name),
+                    el("p", { class: "compact-meta" }, [`${item.cadence} · `, el("span", { class: tone }, label)])
+                  ]),
+                  el("span", { class: "compact-cta" }, open ? "Close" : "Manage")
+                ]),
+                el("div", { class: "compact-panel" }, productControls(item))
+              ]);
+            }))
+          ]),
+          el("p", { class: "section-label" }, "Push notifications"),
+          el("p", { class: "section-note" }, "One general opt-in. Not interest-based by topic."),
+          el("article", { class: "sub-card" }, [
+            el("div", { class: "sub-main" }, [
+              el("div", {}, [
+                el("p", { class: "sub-kicker" }, "App · general"),
+                el("h2", { class: "sub-title" }, "Push notifications"),
+                el("p", { class: "sub-blurb" }, "Alerts from The Times app — breaking news and time-sensitive notices."),
+                el("div", { class: "sub-meta" }, [el("span", {}, "Push"), el("span", { class: pushOn ? "is-on" : "" }, pushOn ? "On" : "Off")])
+              ]),
+              el("button", { type: "button", class: "push-manage", onclick: () => { pushOn = !pushOn; render(); } }, pushOn ? "Turn off" : "Turn on")
+            ])
+          ]),
+          el("p", { class: "section-label" }, ["Text messages", el("span", { class: "beta-tag" }, "Beta")]),
+          el("p", { class: "section-note" }, "SMS, MMS, WhatsApp, and RCS. Opting in records interest; these are not sending at scale yet."),
+          ...Object.entries(textChannels).map(([id, channel]) => el("div", { class: "text-row" }, [
+            el("div", {}, [
+              el("strong", {}, [channel.title, el("span", { class: "beta-tag" }, "Beta")]),
+              el("span", {}, channel.blurb),
+              el("p", { class: "door" }, channel.on ? "Interest recorded — no texts sending yet." : "Off · tap to register interest")
+            ]),
+            el("button", {
+              type: "button",
+              class: channel.on ? "is-on" : "",
+              onclick: () => {
+                channel.on = !channel.on;
+                if ((id === "SMS" || id === "WhatsApp") && channel.on) subscribeChannel(id);
+                else if (preferenceChannel === id && !channel.on) {
+                  preferenceChannel = "";
+                  preferenceOutcome = EMAIL_PRODUCTS[preferenceProduct].subscribed ? "opt-down" : "unsubscribed";
+                  render();
+                } else render();
+              }
+            }, channel.on ? "Turn off" : "Opt in")
+          ])),
+          el("div", { class: "discover-head" }, [el("h2", {}, "Discover more"), el("p", {}, "Email newsletters you can add")]),
+          ...discover.map(item => {
+            const open = prefsDiscoverId === item.id;
+            return el("div", {}, [
+              el("button", {
+                type: "button",
+                class: `discover-card${open ? " is-open" : ""}`,
+                onclick: () => { prefsDiscoverId = open ? null : item.id; render(); }
+              }, [
+                el("div", { class: `discover-thumb ${item.tone || "tone-a"}` }, item.thumb || item.name),
+                el("div", { class: "discover-copy" }, [el("strong", {}, item.name), el("span", {}, item.blurb)]),
+                el("span", { class: "discover-cta" }, open ? "Close" : "See more")
+              ]),
+              open ? el("div", { class: "discover-panel" }, [
+                el("p", {}, "Adds an email newsletter only. Push stays general — not interest-based."),
+                el("button", { type: "button", class: "push-manage", onclick: () => { item.subscribed = true; item.cadence = item.base; prefsDiscoverId = null; prefsDrawerOpen = true; render(); } }, "Get by email")
+              ]) : null
+            ]);
+          })
+        ])
+      );
+      prefsEl.scrollTop = scroll;
+    }
+
     function render() {
       rememberSession();
       screenEl.dataset.view = view;
       launcherEl.hidden = view !== "home";
       inboxEl.hidden = view !== "list";
       conversationEl.hidden = view !== "thread";
+      prefsEl.hidden = view !== "prefs";
+      if (view === "prefs") {
+        screenEl.dataset.channel = "email";
+        renderPreferences();
+        return;
+      }
       if (view === "home") {
         screenEl.dataset.channel = "home";
         return;
@@ -1165,15 +1577,14 @@
         const articles = merge(data.searches);
         latest = { data, articles };
         thread.push({ type: "brief", data, articles, mode: "brief" });
-        if (wantsFollowUp(text) && service.state !== "active" && service.state !== "paused") {
-          service.state = "awaiting";
+        const automate = wantsFollowUp(text) && service.state !== "active" && service.state !== "paused";
+        if (automate) {
           service.scope = text.toLowerCase().includes("paris") ? "Paris trip — must-sees, local recommendations, and disruptions that could affect plans" : "The subject of this question";
-          service.pendingConfirmationId = ++confirmationSequence;
-          thread.push({ type: "confirm", id: service.pendingConfirmationId, snapshot: null });
+          beginAutomation();
         } else if (service.state === "none" || service.state === "cancelled") {
-          thread.push({ type: "times", text: `This stays a one-time answer. I have not enrolled you in ${channelConfig().plural}.` });
+          thread.push({ type: "times", text: `This stays a one-time answer. I have not started ${channelConfig().plural} for a period.` });
         }
-        addLog("Answer only", `${articles.length} stories retrieved. No recurring send.`);
+        if (!automate) addLog("Answer only", `${articles.length} stories retrieved. No recurring send.`);
       } catch (error) {
         const index = thread.findIndex(message => message.type === "pending");
         if (index >= 0) thread.splice(index, 1);
@@ -1213,12 +1624,8 @@
       thread.push({ type: "reader", text });
       composer.value = "";
       const value = text.toLowerCase();
-      if (service.state === "awaiting" && /^(yes|start|confirm)\b/.test(value)) {
-        activate(false);
-        return;
-      }
-      if (service.state === "awaiting" && /\b(?:stop|cancel|unsubscribe|do not text|don't text|dont text)\b/.test(value)) {
-        decline(true);
+      if ((service.state === "active" || service.state === "paused") && /\b(?:just this answer|one time|one-time|do not text|don't text|dont text)\b/.test(value)) {
+        chooseOneTime(true);
         return;
       }
       if ((service.state === "active" || service.state === "paused") && /\b(?:stop|cancel|unsubscribe)\b/.test(value)) {
@@ -1233,7 +1640,7 @@
         resumeService();
         return;
       }
-      if ((service.state === "active" || service.state === "awaiting") && /\bless often\b/.test(value)) {
+      if ((service.state === "active" || service.state === "paused") && /\bless often\b/.test(value)) {
         lessen();
         return;
       }
